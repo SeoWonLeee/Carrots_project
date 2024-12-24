@@ -1,5 +1,6 @@
 package com.carrotzmarket.api.domain.user.dto;
 
+import com.carrotzmarket.db.user.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,4 +29,14 @@ public class UserResponseDto {
     private String region;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
+    private boolean loginLocked;
+    private int failedLoginAttempts;
+
+    public UserResponseDto(UserEntity userEntity) {
+        this.id = userEntity.getId();
+        this.loginId = userEntity.getLoginId();
+        this.email = userEntity.getEmail();
+        this.loginLocked = userEntity.isLoginLocked();
+        this.failedLoginAttempts = userEntity.getFailedLoginAttempts();
+    }
 }
