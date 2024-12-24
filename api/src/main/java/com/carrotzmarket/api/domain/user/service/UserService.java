@@ -13,6 +13,8 @@ import com.carrotzmarket.api.domain.user.repository.UserRepository;
 import com.carrotzmarket.db.region.RegionEntity;
 import com.carrotzmarket.db.user.UserEntity;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +42,8 @@ public class UserService {
     @Value("${file.upload.dir:/uploads/profile-images}")
     private String profileImageDir;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     public UserResponseDto register(UserRegisterRequestDto request, MultipartFile profileImage) {
         userRepository.findByLoginId(request.getLoginId())
                 .ifPresent(user -> {
@@ -58,7 +62,9 @@ public class UserService {
         UserEntity userEntity = userConverter.toEntity(request, region, profileImageUrl);
         userEntity.setRegion(region.getName());
 
+        System.out.println("Before update: " + userEntity.getFailedLoginAttempts());
         userRepository.save(userEntity);
+        System.out.println("After update, persisted in DB: " + userEntity.getFailedLoginAttempts());
 
         return userConverter.toResponse(userEntity);
     }
@@ -113,17 +119,54 @@ public class UserService {
     }
 
 
-
     public UserResponseDto login(UserLoginRequestDto request) {
+        logger.info("Login attempt for user: {}", request.getLoginId());
+
         UserEntity userEntity = userRepository.findByLoginId(request.getLoginId())
-                .filter(user -> user.getPassword().equals(request.getPassword()))
-                .orElseThrow(() -> new ApiException(UserErrorCode.USER_NOT_FOUND, "잘못된 로그인 정보"));
+                .orElseThrow(() -> {
+                    logger.error("User not found for loginId: {}", request.getLoginId());
+                    return new ApiException(UserErrorCode.USER_NOT_FOUND, "잘못된 로그인 정보입니다.");
+                });
 
+        if (userEntity.isLoginLocked() && userEntity.getLastFailedLoginAttempt() != null &&
+                userEntity.getLastFailedLoginAttempt().plusMinutes(UserEntity.LOCK_DURATION_MINUTES).isAfter(LocalDateTime.now())) {
+            logger.warn("User account is locked for loginId: {}", request.getLoginId());
+            throw new ApiException(UserErrorCode.FAILED_TO_LOGIN, "5회 이상 비밀번호를 잘못 입력하여 5분 동안 로그인이 제한됩니다.");
+        }
+
+        if (!userEntity.getPassword().equals(request.getPassword())) {
+            int failedAttempts = userEntity.getFailedLoginAttempts() + 1;
+            userEntity.setFailedLoginAttempts(failedAttempts);
+            userEntity.setLastFailedLoginAttempt(LocalDateTime.now());
+            logger.info("Failed login attempt for user: {}. Failed attempts: {}", request.getLoginId(), failedAttempts);
+
+            if (failedAttempts >= UserEntity.MAX_FAILED_ATTEMPTS) {
+                userEntity.setLoginLocked(true);
+                logger.warn("User account locked due to too many failed attempts for loginId: {}", request.getLoginId());
+            }
+
+            userRepository.save(userEntity);
+            logger.debug("UserEntity saved: {}", userEntity);
+
+            throw new ApiException(UserErrorCode.FAILED_TO_LOGIN,
+                    String.format("잘못된 비밀번호 (실패 횟수: %d / %d)", failedAttempts, UserEntity.MAX_FAILED_ATTEMPTS));
+        }
+
+        userEntity.setFailedLoginAttempts(0);
+        userEntity.setLastFailedLoginAttempt(null);
+        userEntity.setLoginLocked(false);
         userEntity.setLastLoginAt(LocalDateTime.now());
-        userRepository.save(userEntity);
 
-        return userConverter.toResponse(userEntity);
+        logger.info("Successful login for user: {}", request.getLoginId());
+
+        userRepository.save(userEntity);
+        logger.debug("UserEntity saved after successful login: {}", userEntity);
+
+        return new UserResponseDto(userEntity);
     }
+
+
+
 
     public UserResponseDto getUserInfo(String loginId) {
         UserEntity userEntity = userRepository.findByLoginId(loginId)
