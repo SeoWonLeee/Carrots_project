@@ -77,28 +77,4 @@ public class UserEntity {
     public void preUpdate() {
         this.lastLoginAt = LocalDateTime.now();
     }
-
-    // Increment failed login attempts
-    public void incrementFailedAttempts() {
-        this.failedLoginAttempts++;
-    }
-
-    // Reset failed login attempts
-    public void resetFailedAttempts() {
-        this.failedLoginAttempts = 0;
-        this.lastFailedLoginAttempt = null;
-        this.isLoginLocked = false;
-    }
-
-    // Lock the account
-    public void lockAccount() {
-        this.isLoginLocked = true;
-        this.lastFailedLoginAttempt = LocalDateTime.now();
-    }
-
-    // Check if the account is still locked
-    public boolean isAccountLocked() {
-        return this.isLoginLocked && this.lastFailedLoginAttempt != null
-                && this.lastFailedLoginAttempt.isAfter(LocalDateTime.now().minusMinutes(LOCK_DURATION_MINUTES));
-    }
 }

@@ -17,11 +17,28 @@ public class UserRepository{
     @PersistenceContext
     private final EntityManager em;
 
-    @Transactional
-    public void save(UserEntity user) {
-        UserEntity managedUser = em.merge(user);
+    public UserEntity save(UserEntity userEntity) {
+        UserEntity managedUser = em.merge(userEntity);
         em.flush();
-        System.out.println("Entity contained in persistence context: " + em.contains(managedUser)); // 변경된 객체 확인
+        System.out.println("Saved UserEntity: " + managedUser);
+        System.out.println("Entity after flush: " + managedUser);
+        System.out.println("Entity contained in persistence context: " + em.contains(managedUser));
+        UserEntity persistedUser = em.find(UserEntity.class, managedUser.getId());
+        System.out.println("Entity from DB after flush: " + persistedUser);
+        return managedUser;
+    }
+
+    public UserEntity saveAndFlush(UserEntity userEntity) {
+        UserEntity managedUser = em.merge(userEntity);
+        save(userEntity);
+        em.flush();
+        System.out.println("Saved UserEntity: " + managedUser);
+        System.out.println("Entity after flush: " + managedUser);
+        System.out.println("Entity contained in persistence context: " + em.contains(managedUser));
+        UserEntity persistedUser = em.find(UserEntity.class, managedUser.getId());
+        System.out.println("Entity from DB after flush: " + persistedUser);
+        em.detach(userEntity);
+        return userEntity;
     }
 
     public Optional<RegionEntity> findRegionById(Long regionid){

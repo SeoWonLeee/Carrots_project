@@ -15,9 +15,14 @@ import com.carrotzmarket.db.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -121,7 +126,6 @@ public class UserService {
 
     public UserResponseDto login(UserLoginRequestDto request) {
         logger.info("Login attempt for user: {}", request.getLoginId());
-
         UserEntity userEntity = userRepository.findByLoginId(request.getLoginId())
                 .orElseThrow(() -> {
                     logger.error("User not found for loginId: {}", request.getLoginId());
@@ -130,39 +134,42 @@ public class UserService {
 
         if (userEntity.isLoginLocked() && userEntity.getLastFailedLoginAttempt() != null &&
                 userEntity.getLastFailedLoginAttempt().plusMinutes(UserEntity.LOCK_DURATION_MINUTES).isAfter(LocalDateTime.now())) {
-            logger.warn("User account is locked for loginId: {}", request.getLoginId());
-            throw new ApiException(UserErrorCode.FAILED_TO_LOGIN, "5회 이상 비밀번호를 잘못 입력하여 5분 동안 로그인이 제한됩니다.");
+            return UserResponseDto.builder()
+                    .loginId(userEntity.getLoginId())
+                    .status("LOCKED")
+                    .message("5회 이상 비밀번호를 잘못 입력하여 5분 동안 로그인이 제한됩니다.")
+                    .build();
         }
 
         if (!userEntity.getPassword().equals(request.getPassword())) {
-            int failedAttempts = userEntity.getFailedLoginAttempts() + 1;
-            userEntity.setFailedLoginAttempts(failedAttempts);
+            userEntity.setFailedLoginAttempts(userEntity.getFailedLoginAttempts() + 1);
             userEntity.setLastFailedLoginAttempt(LocalDateTime.now());
-            logger.info("Failed login attempt for user: {}. Failed attempts: {}", request.getLoginId(), failedAttempts);
 
-            if (failedAttempts >= UserEntity.MAX_FAILED_ATTEMPTS) {
+            if (userEntity.getFailedLoginAttempts() >= UserEntity.MAX_FAILED_ATTEMPTS) {
                 userEntity.setLoginLocked(true);
-                logger.warn("User account locked due to too many failed attempts for loginId: {}", request.getLoginId());
             }
 
-            userRepository.save(userEntity);
-            logger.debug("UserEntity saved: {}", userEntity);
+            userRepository.saveAndFlush(userEntity);
 
-            throw new ApiException(UserErrorCode.FAILED_TO_LOGIN,
-                    String.format("잘못된 비밀번호 (실패 횟수: %d / %d)", failedAttempts, UserEntity.MAX_FAILED_ATTEMPTS));
+            return UserResponseDto.builder()
+                    .loginId(userEntity.getLoginId())
+                    .status("FAILED")
+                    .message(String.format("잘못된 비밀번호. (실패 횟수: %d / %d)", userEntity.getFailedLoginAttempts(), UserEntity.MAX_FAILED_ATTEMPTS))
+                    .build();
         }
 
+        // 성공적인 로그인 처리
         userEntity.setFailedLoginAttempts(0);
         userEntity.setLastFailedLoginAttempt(null);
         userEntity.setLoginLocked(false);
         userEntity.setLastLoginAt(LocalDateTime.now());
 
-        logger.info("Successful login for user: {}", request.getLoginId());
-
-        userRepository.save(userEntity);
-        logger.debug("UserEntity saved after successful login: {}", userEntity);
-
-        return new UserResponseDto(userEntity);
+        userRepository.saveAndFlush(userEntity);
+        return UserResponseDto.builder()
+                .loginId(userEntity.getLoginId())
+                .status("SUCCESS")
+                .message("로그인 성공")
+                .build();
     }
 
 

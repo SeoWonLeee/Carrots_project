@@ -29,14 +29,9 @@ public class UserResponseDto {
     private String region;
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;
+    private LocalDateTime lastFailedLoginAttempt;
     private boolean loginLocked;
     private int failedLoginAttempts;
-
-    public UserResponseDto(UserEntity userEntity) {
-        this.id = userEntity.getId();
-        this.loginId = userEntity.getLoginId();
-        this.email = userEntity.getEmail();
-        this.loginLocked = userEntity.isLoginLocked();
-        this.failedLoginAttempts = userEntity.getFailedLoginAttempts();
-    }
+    private String status;
+    private String message;
 }
