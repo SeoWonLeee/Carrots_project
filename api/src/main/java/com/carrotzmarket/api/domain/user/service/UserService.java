@@ -13,9 +13,16 @@ import com.carrotzmarket.api.domain.user.repository.UserRepository;
 import com.carrotzmarket.db.region.RegionEntity;
 import com.carrotzmarket.db.user.UserEntity;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -40,6 +47,8 @@ public class UserService {
     @Value("${file.upload.dir:/uploads/profile-images}")
     private String profileImageDir;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
     public UserResponseDto register(UserRegisterRequestDto request, MultipartFile profileImage) {
         userRepository.findByLoginId(request.getLoginId())
                 .ifPresent(user -> {
@@ -58,7 +67,9 @@ public class UserService {
         UserEntity userEntity = userConverter.toEntity(request, region, profileImageUrl);
         userEntity.setRegion(region.getName());
 
+        System.out.println("Before update: " + userEntity.getFailedLoginAttempts());
         userRepository.save(userEntity);
+        System.out.println("After update, persisted in DB: " + userEntity.getFailedLoginAttempts());
 
         return userConverter.toResponse(userEntity);
     }
@@ -113,17 +124,56 @@ public class UserService {
     }
 
 
-
     public UserResponseDto login(UserLoginRequestDto request) {
+        logger.info("Login attempt for user: {}", request.getLoginId());
         UserEntity userEntity = userRepository.findByLoginId(request.getLoginId())
-                .filter(user -> user.getPassword().equals(request.getPassword()))
-                .orElseThrow(() -> new ApiException(UserErrorCode.USER_NOT_FOUND, "잘못된 로그인 정보"));
+                .orElseThrow(() -> {
+                    logger.error("User not found for loginId: {}", request.getLoginId());
+                    return new ApiException(UserErrorCode.USER_NOT_FOUND, "잘못된 로그인 정보입니다.");
+                });
 
+        if (userEntity.isLoginLocked() && userEntity.getLastFailedLoginAttempt() != null &&
+                userEntity.getLastFailedLoginAttempt().plusMinutes(UserEntity.LOCK_DURATION_MINUTES).isAfter(LocalDateTime.now())) {
+            return UserResponseDto.builder()
+                    .loginId(userEntity.getLoginId())
+                    .status("LOCKED")
+                    .message("5회 이상 비밀번호를 잘못 입력하여 5분 동안 로그인이 제한됩니다.")
+                    .build();
+        }
+
+        if (!userEntity.getPassword().equals(request.getPassword())) {
+            userEntity.setFailedLoginAttempts(userEntity.getFailedLoginAttempts() + 1);
+            userEntity.setLastFailedLoginAttempt(LocalDateTime.now());
+
+            if (userEntity.getFailedLoginAttempts() >= UserEntity.MAX_FAILED_ATTEMPTS) {
+                userEntity.setLoginLocked(true);
+            }
+
+            userRepository.saveAndFlush(userEntity);
+
+            return UserResponseDto.builder()
+                    .loginId(userEntity.getLoginId())
+                    .status("FAILED")
+                    .message(String.format("잘못된 비밀번호. (실패 횟수: %d / %d)", userEntity.getFailedLoginAttempts(), UserEntity.MAX_FAILED_ATTEMPTS))
+                    .build();
+        }
+
+        // 성공적인 로그인 처리
+        userEntity.setFailedLoginAttempts(0);
+        userEntity.setLastFailedLoginAttempt(null);
+        userEntity.setLoginLocked(false);
         userEntity.setLastLoginAt(LocalDateTime.now());
-        userRepository.save(userEntity);
 
-        return userConverter.toResponse(userEntity);
+        userRepository.saveAndFlush(userEntity);
+        return UserResponseDto.builder()
+                .loginId(userEntity.getLoginId())
+                .status("SUCCESS")
+                .message("로그인 성공")
+                .build();
     }
+
+
+
 
     public UserResponseDto getUserInfo(String loginId) {
         UserEntity userEntity = userRepository.findByLoginId(loginId)
