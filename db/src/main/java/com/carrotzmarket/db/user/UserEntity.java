@@ -53,6 +53,18 @@ public class UserEntity {
     @Column(length = 100)
     private String region;
 
+    @Column(name = "failed_login_attempts", nullable = false)
+    private int failedLoginAttempts = 0;
+
+    @Column(name = "last_failed_login_attempt")
+    private LocalDateTime lastFailedLoginAttempt;
+
+    @Column(name = "is_login_locked", nullable = false)
+    private boolean isLoginLocked = false;
+
+    public static final int MAX_FAILED_ATTEMPTS = 5;
+    public static final int LOCK_DURATION_MINUTES = 5;
+
     @Column(name = "manner_temperature", nullable = false)
     private double mannerTemperature = 36.5;
 

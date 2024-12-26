@@ -15,11 +15,29 @@ public class UserRepository{
 
     private final EntityManager em;
 
-    public void save(UserEntity user) {
-        em.persist(user);
+    public UserEntity save(UserEntity userEntity) {
+        UserEntity managedUser = em.merge(userEntity);
+        em.flush();
+        System.out.println("Saved UserEntity: " + managedUser);
+        System.out.println("Entity after flush: " + managedUser);
+        System.out.println("Entity contained in persistence context: " + em.contains(managedUser));
+        UserEntity persistedUser = em.find(UserEntity.class, managedUser.getId());
+        System.out.println("Entity from DB after flush: " + persistedUser);
+        return managedUser;
     }
 
-
+    public UserEntity saveAndFlush(UserEntity userEntity) {
+        UserEntity managedUser = em.merge(userEntity);
+        save(userEntity);
+        em.flush();
+        System.out.println("Saved UserEntity: " + managedUser);
+        System.out.println("Entity after flush: " + managedUser);
+        System.out.println("Entity contained in persistence context: " + em.contains(managedUser));
+        UserEntity persistedUser = em.find(UserEntity.class, managedUser.getId());
+        System.out.println("Entity from DB after flush: " + persistedUser);
+        em.detach(userEntity);
+        return userEntity;
+    }
     public Optional<UserEntity> findByLoginId(String loginId) {
         return em.createQuery("SELECT u FROM UserEntity u WHERE u.loginId = :loginId", UserEntity.class)
                 .setParameter("loginId", loginId)
