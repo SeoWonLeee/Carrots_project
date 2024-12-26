@@ -15,14 +15,9 @@ import com.carrotzmarket.db.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -30,6 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -67,9 +63,7 @@ public class UserService {
         UserEntity userEntity = userConverter.toEntity(request, region, profileImageUrl);
         userEntity.setRegion(region.getName());
 
-        System.out.println("Before update: " + userEntity.getFailedLoginAttempts());
         userRepository.save(userEntity);
-        System.out.println("After update, persisted in DB: " + userEntity.getFailedLoginAttempts());
 
         return userConverter.toResponse(userEntity);
     }
@@ -124,6 +118,7 @@ public class UserService {
     }
 
 
+
     public UserResponseDto login(UserLoginRequestDto request) {
         logger.info("Login attempt for user: {}", request.getLoginId());
         UserEntity userEntity = userRepository.findByLoginId(request.getLoginId())
@@ -171,9 +166,6 @@ public class UserService {
                 .message("로그인 성공")
                 .build();
     }
-
-
-
 
     public UserResponseDto getUserInfo(String loginId) {
         UserEntity userEntity = userRepository.findByLoginId(loginId)
@@ -226,5 +218,18 @@ public class UserService {
         System.out.println("User updated: " + userEntity);
 
         return userConverter.toResponse(userEntity);
+    }
+
+
+    @Transactional
+    public void updateMannerTemperature(Long sellerId) {
+        int completedTransactions = userRepository.countCompletedTransactionsBySellerId(sellerId);
+
+        Optional<UserEntity> sellerOptional = userRepository.findById(sellerId);
+        UserEntity seller = sellerOptional.orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다."));
+
+        double newMannerTemperature = 36.5 + completedTransactions;
+
+        userRepository.updateMannerTemperature(sellerId, newMannerTemperature);
     }
 }

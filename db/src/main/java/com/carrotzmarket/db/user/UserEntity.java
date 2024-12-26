@@ -65,6 +65,9 @@ public class UserEntity {
     public static final int MAX_FAILED_ATTEMPTS = 5;
     public static final int LOCK_DURATION_MINUTES = 5;
 
+    @Column(name = "manner_temperature", nullable = false)
+    private double mannerTemperature = 36.5;
+
     @PrePersist
     public void prePersist() {
         this.createdAt = LocalDateTime.now();
