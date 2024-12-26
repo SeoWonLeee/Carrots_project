@@ -1,5 +1,6 @@
 package com.carrotzmarket.api.domain.user.controller;
 
+import com.carrotzmarket.api.common.exception.ApiException;
 import com.carrotzmarket.api.domain.user.dto.UserLoginRequestDto;
 import com.carrotzmarket.api.domain.user.dto.UserRegisterRequestDto;
 import com.carrotzmarket.api.domain.user.dto.UserResponseDto;
@@ -14,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/open-api/user")
@@ -35,22 +38,35 @@ public class UserOpenApiController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponseDto> login(
+    public ResponseEntity<Map<String, Object>> login(
             @Valid @RequestBody UserLoginRequestDto request, HttpServletRequest httpRequest) {
-        UserResponseDto response = userService.login(request);
 
-        HttpSession session = httpRequest.getSession();
-        session.setAttribute("userSession", new UserSessionInfoDto(
-                response.getId(),
-                response.getLoginId(),
-                response.getEmail(),
-                response.getPhone(),
-                response.getProfileImageUrl(),
-                response.getRegion()
-        ));
+        try {
+            UserResponseDto response = userService.login(request);
 
-        return ResponseEntity.ok(response);
+            HttpSession session = httpRequest.getSession();
+            session.setAttribute("userSession", new UserSessionInfoDto(
+                    response.getId(),
+                    response.getLoginId(),
+                    response.getEmail(),
+                    response.getPhone(),
+                    response.getProfileImageUrl(),
+                    response.getRegion()
+            ));
+
+            return ResponseEntity.ok(Map.of(
+                    "status", "success",
+                    "data", response
+            ));
+        } catch (ApiException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
+                    "status", "error",
+                    "code", e.getErrorCodeInterface().getErrorCode(),
+                    "message", e.getErrorDescription()
+            ));
+        }
     }
+
 
     @GetMapping("/session-status")
     public ResponseEntity<String> checkSessionStatus(HttpServletRequest httpRequest) {
