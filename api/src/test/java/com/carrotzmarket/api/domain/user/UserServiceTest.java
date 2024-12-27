@@ -35,7 +35,7 @@ public class UserServiceTest {
                 1L
         );
 
-        UserResponseDto response = userService.register(request, null);
+        UserResponseDto response = userService.register(request);
 
         assertNotNull(response);
         assertEquals("testUser", response.getLoginId());
