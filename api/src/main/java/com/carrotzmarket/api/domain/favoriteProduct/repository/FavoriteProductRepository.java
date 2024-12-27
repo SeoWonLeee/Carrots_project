@@ -23,3 +23,4 @@ public interface FavoriteProductRepository extends JpaRepository<FavoriteProduct
     @Query("DELETE FROM FavoriteProductEntity f WHERE f.product.id = :productId")
     void deleteByProductId(@Param("productId") Long productId);
 }
+
