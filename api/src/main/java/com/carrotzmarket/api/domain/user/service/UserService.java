@@ -25,7 +25,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -37,7 +36,7 @@ public class UserService {
     private final UserConverter userConverter;
     private final RegionRepository regionRepository;
 
-    @Value("${default.profile.image:/uploads/profile-images/default-profile.jpg}")
+    @Value("${default.profile.image}")
     private String defaultProfileImageUrl;
 
     @Value("${file.upload.dir:/uploads/profile-images}")
@@ -45,7 +44,7 @@ public class UserService {
 
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    public UserResponseDto register(UserRegisterRequestDto request, MultipartFile profileImage) {
+    public UserResponseDto register(UserRegisterRequestDto request) {
         userRepository.findByLoginId(request.getLoginId())
                 .ifPresent(user -> {
                     throw new ApiException(UserErrorCode.USER_ALREADY_EXIST, "이미 존재하는 사용자입니다.");
@@ -58,7 +57,7 @@ public class UserService {
         RegionEntity region = regionRepository.findById(request.getRegionId())
                 .orElseThrow(() -> new ApiException(RegionErrorCode.INVALID_REGION, "유효하지 않은 지역입니다."));
 
-        String profileImageUrl = saveProfileImage(request.getLoginId(), profileImage, null);
+        String profileImageUrl = defaultProfileImageUrl;
 
         UserEntity userEntity = userConverter.toEntity(request, region, profileImageUrl);
         userEntity.setRegion(region.getName());
@@ -70,7 +69,7 @@ public class UserService {
 
     private String saveProfileImage(String loginId, MultipartFile profileImage, String currentProfileImageUrl) {
         if (profileImage == null || profileImage.isEmpty()) {
-            return currentProfileImageUrl;
+            return defaultProfileImageUrl;
         }
 
         try {
@@ -205,8 +204,8 @@ public class UserService {
         // 프로필 이미지 처리
         if (profileImage == null || profileImage.isEmpty()) {
             if (!userEntity.getProfileImageUrl().equals(defaultProfileImageUrl)) {
-                userEntity.setProfileImageUrl(defaultProfileImageUrl); // 기본 이미지 복원
-                System.out.println("기본 프로필 이미지로 설정.");
+                userEntity.setProfileImageUrl(defaultProfileImageUrl);
+                System.out.println("기본 프로필 이미지로 설정." + defaultProfileImageUrl);
             }
         } else {
             // 새로운 이미지 저장 및 URL 업데이트

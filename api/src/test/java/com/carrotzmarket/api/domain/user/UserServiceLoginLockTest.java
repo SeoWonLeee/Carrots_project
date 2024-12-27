@@ -40,7 +40,7 @@ public class UserServiceLoginLockTest {
         );
 
         testUser = userRepository.findByLoginId(registerRequest.getLoginId()).orElseGet(() -> {
-            userService.register(registerRequest, null);
+            userService.register(null);
             return userRepository.findByLoginId(registerRequest.getLoginId()).orElseThrow();
         });
     }

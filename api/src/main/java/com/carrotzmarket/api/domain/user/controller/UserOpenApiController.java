@@ -28,10 +28,8 @@ public class UserOpenApiController {
     @PostMapping(value = "/register", consumes = "multipart/form-data")
     public ResponseEntity<UserResponseDto> register(
             @Parameter(description = "사용자 정보")
-            @RequestPart("request") UserRegisterRequestDto request,
-            @Parameter(description = "프로필 이미지 파일", required = false)
-            @RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
-        UserResponseDto response = userService.register(request, profileImage);
+            @RequestPart("request") UserRegisterRequestDto request){
+        UserResponseDto response = userService.register(request);
         return ResponseEntity.ok(response);
     }
 
