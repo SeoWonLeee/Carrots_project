@@ -19,18 +19,12 @@ public class ViewedProductController {
     @PostMapping("/{userId}/{productId}")
     public ResponseEntity<String> recordViewedProduct(@PathVariable Long userId, @PathVariable Long productId) {
         viewedProductService.recordViewedProduct(userId, productId);
-        return ResponseEntity.ok("Viewed product has been recorded successfully.");
+        return ResponseEntity.ok("본 제품이 성공적으로 기록되었습니다.");
     }
 
     @GetMapping("/{userId}")
     public ResponseEntity<Set<Long>> getViewedProductIds(@PathVariable Long userId) {
         Set<Long> viewedProductIds = viewedProductService.getViewedProductIds(userId);
         return ResponseEntity.ok(viewedProductIds);
-    }
-
-    @GetMapping("/{userId}/details")
-    public ResponseEntity<List<ViewedProductEntity>> getViewedProductsByUser(@PathVariable Long userId) {
-        List<ViewedProductEntity> viewedProducts = viewedProductService.getViewedProductsByUser(userId);
-        return ResponseEntity.ok(viewedProducts);
     }
 }
