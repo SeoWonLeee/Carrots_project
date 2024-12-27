@@ -92,8 +92,10 @@ public class ProductService {
 
 
     public void deleteProduct(Long id) {
+        favoriteProductRepository.deleteByProductId(id);
+
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
         productRepository.delete(product);
     }
