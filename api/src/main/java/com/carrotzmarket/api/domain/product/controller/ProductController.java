@@ -49,6 +49,7 @@ public class ProductController {
         return ResponseEntity.ok(result);
     }
 
+
     @GetMapping("/{id}/manner-temperature")
     public ResponseEntity<Map<String, Object>> getSellerMannerTemperatureAndOtherProducts(@PathVariable Long id) {
         Map<String, Object> response = productService.getSellerMannerTemperature(id);

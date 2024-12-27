@@ -300,10 +300,15 @@ public class ProductService {
         UserEntity seller = userRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다."));
 
+        Double mannerTemperature = userRepository.findMannerTemperatureById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("판매자의 매너 온도를 찾을 수 없습니다."));
+
+
         SellerProfileDto sellerProfile = new SellerProfileDto(
                 seller.getId(),
                 seller.getLoginId(),
-                seller.getProfileImageUrl()
+                seller.getProfileImageUrl(),
+                mannerTemperature
         );
 
         List<ProductEntity> otherProducts = productRepository.findByUserId(sellerId)

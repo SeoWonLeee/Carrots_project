@@ -11,4 +11,5 @@ public class SellerProfileDto {
     private Long userId;
     private String loginId;
     private String profileImageUrl;
+    private Double mannerTemperature;
 }
