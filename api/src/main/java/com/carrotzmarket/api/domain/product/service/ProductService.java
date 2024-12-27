@@ -92,8 +92,10 @@ public class ProductService {
 
 
     public void deleteProduct(Long id) {
+        favoriteProductRepository.deleteByProductId(id);
+
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
         productRepository.delete(product);
     }
@@ -298,10 +300,15 @@ public class ProductService {
         UserEntity seller = userRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다."));
 
+        Double mannerTemperature = userRepository.findMannerTemperatureById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("판매자의 매너 온도를 찾을 수 없습니다."));
+
+
         SellerProfileDto sellerProfile = new SellerProfileDto(
                 seller.getId(),
                 seller.getLoginId(),
-                seller.getProfileImageUrl()
+                seller.getProfileImageUrl(),
+                mannerTemperature
         );
 
         List<ProductEntity> otherProducts = productRepository.findByUserId(sellerId)
@@ -458,3 +465,4 @@ public class ProductService {
                 .collect(Collectors.toList());
     }
 }
+
