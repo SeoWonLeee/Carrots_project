@@ -31,19 +31,23 @@ public class AuthAPIController {
         UserResponse findUser = (UserResponse) userLoginService.login(request);
         UserSession userSession = userConverter.toSession(findUser);
 
-        HttpSession session = servlet.getSession();
-        session.setAttribute("userSession", userSession);
+        createSession(userSession, servlet);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<Map<String, Object>> logout(HttpServletRequest request) {
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
 
         if (session != null) {
             session.invalidate();
         }
 
-        return ResponseEntity.ok(Map.of("status", "success"));
+        return ResponseEntity.ok().build();
+    }
+
+    private void createSession(UserSession userSession,HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        session.setAttribute("userSession", userSession);
     }
 }

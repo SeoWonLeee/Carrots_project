@@ -7,7 +7,6 @@ import static com.carrotzmarket.api.common.status.UserResponseStatus.SUCCESS;
 import com.carrotzmarket.api.common.api.ResponseInterface;
 import com.carrotzmarket.api.common.error.UserErrorCode;
 import com.carrotzmarket.api.common.exception.ApiException;
-import com.carrotzmarket.api.common.status.UserResponseStatus;
 import com.carrotzmarket.api.domain.image.domain.Image;
 import com.carrotzmarket.api.domain.image.service.ProfileImageService;
 import com.carrotzmarket.api.domain.region.service.RegionService;
@@ -57,14 +56,17 @@ public class UserManagementService {
                 region,
                 uploadImage.getStoreFileName()
         );
-
         return userConverter.toResponse(userEntity, SUCCESS, "회원수정 성공");
     }
 
     public ResponseInterface deleteUser(String loginId) {
-        UserEntity userEntity = findUserEntityByLoginId(loginId);
-        userRepository.delete(userEntity);
-        return UserResponse.builder().status("true").build();
+        try {
+            UserEntity userEntity = findUserEntityByLoginId(loginId);
+            userRepository.delete(userEntity);
+            return UserResponse.builder().status("true").build();
+        } catch (ApiException e) {
+            return userConverter.toResponse(null, FAILURE, e.getMessage());
+        }
     }
 
     public UserEntity findUserEntityByLoginId(String loginId) {

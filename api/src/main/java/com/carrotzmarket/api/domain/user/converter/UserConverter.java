@@ -20,6 +20,7 @@ public class UserConverter {
         userEntity.setPassword(request.getPassword());
         userEntity.setEmail(request.getEmail());
         userEntity.setPhone(request.getPhone());
+        userEntity.setBirthday(request.getBirthday());
         userEntity.setProfileImageUrl(profileImageUrl);
         userEntity.addRegion(region);
         return userEntity;
