@@ -1,8 +1,9 @@
 package com.carrotzmarket.api.domain.user;
 
-import com.carrotzmarket.api.domain.user.dto.UserLoginRequestDto;
-import com.carrotzmarket.api.domain.user.dto.UserRegisterRequestDto;
-import com.carrotzmarket.api.domain.user.service.UserService;
+import com.carrotzmarket.api.domain.user.dto.request.UserLoginRequest;
+import com.carrotzmarket.api.domain.user.dto.request.UserRegisterRequest;
+import com.carrotzmarket.api.domain.user.service.UserLoginService;
+import com.carrotzmarket.api.domain.user.service.UserRegistrationService;
 import com.carrotzmarket.db.user.UserEntity;
 import com.carrotzmarket.api.domain.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,7 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceLoginLockTest {
 
     @Autowired
-    private UserService userService;
+    private UserLoginService userService;
+
+    @Autowired
+    private UserRegistrationService userRegistrationService;
 
     @Autowired
     private UserRepository userRepository;
@@ -30,24 +34,24 @@ public class UserServiceLoginLockTest {
     @BeforeEach
     void setUp() {
         // 테스트용 유저 등록
-        UserRegisterRequestDto registerRequest = new UserRegisterRequestDto(
+        UserRegisterRequest registerRequest = new UserRegisterRequest(
                 "testuser",
                 "password123",
                 "testuser@example.com",
                 "010-1234-5678",
                 null,
-                1L // 지역 ID
+                1L, null
         );
 
         testUser = userRepository.findByLoginId(registerRequest.getLoginId()).orElseGet(() -> {
-            userService.register(null);
+            userRegistrationService.register(registerRequest);
             return userRepository.findByLoginId(registerRequest.getLoginId()).orElseThrow();
         });
     }
 
     @Test
     void testLoginLockAfterFailedAttempts() {
-        UserLoginRequestDto loginRequest = new UserLoginRequestDto("testuser", "wrongpassword");
+        UserLoginRequest loginRequest = new UserLoginRequest("testuser", "wrongpassword");
 
         // 비밀번호 5회 실패 시도
         for (int i = 0; i < 5; i++) {
@@ -71,7 +75,7 @@ public class UserServiceLoginLockTest {
         userRepository.save(lockedUser);
 
         // 올바른 비밀번호로 로그인 성공 확인
-        UserLoginRequestDto correctLoginRequest = new UserLoginRequestDto("testuser", "password123");
+        UserLoginRequest correctLoginRequest = new UserLoginRequest("testuser", "password123");
         assertDoesNotThrow(() -> userService.login(correctLoginRequest));
 
         UserEntity unlockedUser = userRepository.findByLoginId("testuser").orElseThrow();

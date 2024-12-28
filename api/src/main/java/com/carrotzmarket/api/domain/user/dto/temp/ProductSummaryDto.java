@@ -1,4 +1,4 @@
-package com.carrotzmarket.api.domain.user.dto;
+package com.carrotzmarket.api.domain.user.dto.temp;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

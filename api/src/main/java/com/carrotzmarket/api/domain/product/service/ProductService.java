@@ -11,10 +11,10 @@ import com.carrotzmarket.api.domain.productImage.service.FileUploadService;
 import com.carrotzmarket.api.domain.productImage.service.ProductImageService;
 import com.carrotzmarket.api.domain.region.service.RegionService;
 import com.carrotzmarket.api.domain.transaction.repository.ProductTransactionRepository;
-import com.carrotzmarket.api.domain.user.dto.ProductSummaryDto;
-import com.carrotzmarket.api.domain.user.dto.SellerProfileDto;
+import com.carrotzmarket.api.domain.user.dto.temp.ProductSummaryDto;
+import com.carrotzmarket.api.domain.user.dto.temp.SellerProfileDto;
 import com.carrotzmarket.api.domain.user.repository.UserRepository;
-import com.carrotzmarket.api.domain.user.service.UserService;
+import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.api.domain.viewedProduct.service.ViewedProductService;
 import com.carrotzmarket.db.category.CategoryEntity;
 import com.carrotzmarket.db.favoriteProduct.FavoriteProductEntity;
@@ -47,7 +47,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ViewedProductService viewedProductService;
     private final ProductTransactionRepository productTransactionRepository;
-    private final UserService userService;
+    private final UserMannerService userService;
 
     public ProductEntity findProductById(Long id) {
         return productRepository.findById(id)

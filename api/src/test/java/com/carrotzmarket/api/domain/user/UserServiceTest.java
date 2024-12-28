@@ -1,9 +1,9 @@
 package com.carrotzmarket.api.domain.user;
 
-import com.carrotzmarket.api.domain.user.dto.UserRegisterRequestDto;
-import com.carrotzmarket.api.domain.user.dto.UserResponseDto;
+import com.carrotzmarket.api.domain.user.dto.request.UserRegisterRequest;
+import com.carrotzmarket.api.domain.user.dto.response.UserResponse;
 import com.carrotzmarket.api.domain.user.repository.UserRepository;
-import com.carrotzmarket.api.domain.user.service.UserService;
+import com.carrotzmarket.api.domain.user.service.UserRegistrationService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,23 +19,23 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class UserServiceTest {
 
     @Autowired
-    private UserService userService;
+    private UserRegistrationService userService;
 
     @Autowired
     private UserRepository userRepository;
 
     @Test
     void registerUserSuccessfully() {
-        UserRegisterRequestDto request = new UserRegisterRequestDto(
+        UserRegisterRequest request = new UserRegisterRequest(
                 "testUser",
                 "password123",
                 "test@example.com",
                 "010-1234-5678",
                 LocalDate.of(1990, 1, 1),
-                1L
+                1L, null
         );
 
-        UserResponseDto response = userService.register(request);
+        UserResponse response = (UserResponse) userService.register(request);
 
         assertNotNull(response);
         assertEquals("testUser", response.getLoginId());

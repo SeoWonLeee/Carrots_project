@@ -5,15 +5,16 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 
 @Entity
 @Table(name = "user_region")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Setter
 public class UserRegionEntity {
 
     @Id
@@ -27,4 +28,15 @@ public class UserRegionEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "region_id", nullable = false)
     private RegionEntity region;
+
+    public static UserRegionEntity create(UserEntity user, RegionEntity region) {
+        UserRegionEntity userRegionEntity = new UserRegionEntity();
+        userRegionEntity.setUser(user);
+        userRegionEntity.setRegion(region);
+        return userRegionEntity;
+    }
+
+    public String getRegionName() {
+        return region.getName();
+    }
 }

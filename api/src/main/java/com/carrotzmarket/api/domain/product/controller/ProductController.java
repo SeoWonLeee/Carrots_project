@@ -6,12 +6,9 @@ import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
 import com.carrotzmarket.api.domain.product.repository.ProductRepository;
 import com.carrotzmarket.api.domain.product.service.FilterService;
 import com.carrotzmarket.api.domain.product.service.ProductService;
-import com.carrotzmarket.api.domain.user.service.UserService;
+import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +25,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductRepository productRepository;
-    private final UserService userService;
+    private final UserMannerService userService;
     private final FilterService filterService;
 
     @PostMapping(consumes = "multipart/form-data")

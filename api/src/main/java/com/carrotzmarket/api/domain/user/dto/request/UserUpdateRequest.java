@@ -1,4 +1,4 @@
-package com.carrotzmarket.api.domain.user.dto;
+package com.carrotzmarket.api.domain.user.dto.request;
 
 import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserUpdateRequestDto {
+public class UserUpdateRequest {
 
     private String password;
 
@@ -18,4 +18,5 @@ public class UserUpdateRequestDto {
     private String phone;
 
     private Long regionId;
+
 }

@@ -1,9 +1,16 @@
 package com.carrotzmarket.db.user;
 
+import static java.time.LocalDateTime.now;
+
+import com.carrotzmarket.db.region.RegionEntity;
 import jakarta.persistence.*;
+import javax.swing.plaf.synth.Region;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
@@ -14,11 +21,15 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
+@Getter
+@Setter
 public class UserEntity {
+
+    public static final int MAX_FAILED_ATTEMPTS = 5;
+    public static final int LOCK_DURATION_MINUTES = 5;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,13 +59,11 @@ public class UserEntity {
     private LocalDateTime lastLoginAt;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<UserRegionEntity> userRegions = new ArrayList<>();
+    @Builder.Default
+    private List<UserRegionEntity> regions = new ArrayList<>();
 
-    @Column(length = 100)
-    private String region;
-
-    @Column(name = "failed_login_attempts", nullable = false)
-    private int failedLoginAttempts = 0;
+    @Column(name = "failed_login_attempts")
+    private Integer failedLoginAttempts;
 
     @Column(name = "last_failed_login_attempt")
     private LocalDateTime lastFailedLoginAttempt;
@@ -62,15 +71,13 @@ public class UserEntity {
     @Column(name = "is_login_locked", nullable = false)
     private boolean isLoginLocked = false;
 
-    public static final int MAX_FAILED_ATTEMPTS = 5;
-    public static final int LOCK_DURATION_MINUTES = 5;
 
     @Column(name = "manner_temperature", nullable = false)
     private double mannerTemperature = 36.5;
 
     @PrePersist
     public void prePersist() {
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = now();
         if (this.profileImageUrl == null || this.profileImageUrl.isEmpty()) {
             this.profileImageUrl = "/uploads/profile-images/default-profile.jpg";
         }
@@ -78,6 +85,75 @@ public class UserEntity {
 
     @PreUpdate
     public void preUpdate() {
-        this.lastLoginAt = LocalDateTime.now();
+        this.lastLoginAt = now();
     }
+
+    public void updateUser(String password, String email, String phone, RegionEntity region, String profileImageUrl) {
+        if (!password.isEmpty()) {
+            this.password = password;
+        }
+
+        if (!email.isEmpty()) {
+            this.email = email;
+        }
+
+        if (!phone.isEmpty()) {
+            this.phone = phone;
+        }
+
+        if (region != null) {
+            updateRegions(region);
+        }
+
+        if (!profileImageUrl.isEmpty()) {
+            this.profileImageUrl = profileImageUrl;
+        }
+
+    }
+
+    public void loginSuccess() {
+        this.failedLoginAttempts = 0;
+        this.lastFailedLoginAttempt = null;
+        this.isLoginLocked = false;
+        this.lastLoginAt = now();
+    }
+
+    public void loginFail() {
+        if (this.failedLoginAttempts == null) {
+            this.failedLoginAttempts = 0;
+        }
+
+        this.failedLoginAttempts += 1;
+        this.lastFailedLoginAttempt = now();
+
+        if (this.failedLoginAttempts >= MAX_FAILED_ATTEMPTS) {
+            this.isLoginLocked = true;
+            this.lastFailedLoginAttempt = lastFailedLoginAttempt.plusMinutes(LOCK_DURATION_MINUTES);
+        }
+    }
+
+    public boolean isLoginLock() {
+        return isLoginLocked && lastFailedLoginAttempt.isAfter(now());
+    }
+
+    public String getUserRegion() {
+        return regions.stream()
+                .findFirst()
+                .map(UserRegionEntity::getRegionName)
+                .orElse("X");
+    }
+
+    public void updateRegions(RegionEntity region) {
+        this.regions.clear();
+        List<UserRegionEntity> regions = new ArrayList<>();
+        regions.add(UserRegionEntity.create(this, region));
+        this.regions.addAll(regions);
+    }
+
+    public void addRegion(RegionEntity region) {
+        UserRegionEntity userRegionEntity = UserRegionEntity.create(this, region);
+        this.regions.add(userRegionEntity);
+    }
+
+
 }
