@@ -1,6 +1,6 @@
 //package com.carrotzmarket.api.domain.user;
 //
-//import com.carrotzmarket.api.domain.user.controller.UserPrivateApiController;
+//import com.carrotzmarket.api.domain.user.controller.UserAPIController;
 //import com.carrotzmarket.api.domain.user.dto.response.UserResponse;
 //import com.carrotzmarket.api.domain.user.dto.response.UserSession;
 //import com.carrotzmarket.api.domain.user.service.UserManagementService;
@@ -33,7 +33,7 @@
 //    private UserManagementService userManagementService;
 //
 //    @InjectMocks
-//    private UserPrivateApiController userPrivateApiController;
+//    private UserAPIController userPrivateApiController;
 //
 //    private ObjectMapper objectMapper;
 //

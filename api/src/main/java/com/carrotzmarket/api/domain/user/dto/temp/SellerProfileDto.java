@@ -7,8 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class SellerProfile {
+public class SellerProfileDto {
     private Long userId;
     private String loginId;
     private String profileImageUrl;
+    private Double mannerTemperature;
 }

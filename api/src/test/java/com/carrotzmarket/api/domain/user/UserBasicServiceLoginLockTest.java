@@ -18,7 +18,7 @@
 //public class UserBasicServiceLoginLockTest {
 //
 //    @Autowired
-//    private UserBasicService userBasicService;
+//    private User userBasicService;
 //
 //    @Autowired
 //    private UserRepository userRepository;

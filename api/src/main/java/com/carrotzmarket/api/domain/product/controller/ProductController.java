@@ -4,14 +4,11 @@ import com.carrotzmarket.api.domain.product.dto.ProductCreateRequestDto;
 import com.carrotzmarket.api.domain.product.dto.ProductResponseDto;
 import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
 import com.carrotzmarket.api.domain.product.repository.ProductRepository;
+import com.carrotzmarket.api.domain.product.service.FilterService;
 import com.carrotzmarket.api.domain.product.service.ProductService;
-import com.carrotzmarket.api.domain.user.service.UserManagementService;
 import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,14 +25,14 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductRepository productRepository;
-    private final UserMannerService userMannerService;
+    private final UserMannerService userService;
+    private final FilterService filterService;
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<String> createProduct(@ModelAttribute @Valid ProductCreateRequestDto productCreateRequestDto) {
         ProductEntity product = productService.createProduct(productCreateRequestDto);
         return ResponseEntity.ok("Product created with ID: " + product.getId());
     }
-
 
     @GetMapping("/{id}")
     public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long id) {
@@ -63,7 +60,6 @@ public class ProductController {
         return ResponseEntity.ok(updatedProduct);
     }
 
-
     @PatchMapping("/{id}/status")
     public ResponseEntity<ProductResponseDto> updateProductStatus(
             @PathVariable Long id,
@@ -78,11 +74,10 @@ public class ProductController {
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         Long sellerId = product.getUserId();
 
-        userMannerService.updateMannerTemperature(sellerId);
+        userService.updateMannerTemperature(sellerId);
 
         return ResponseEntity.ok("판매자의 매너 온도가 업데이트 되었습니다.");
     }
-
 
     @PostMapping("/{productId}/favorite")
     public String addFavoriteProduct(@RequestParam Long userId, @PathVariable Long productId) {
@@ -93,7 +88,6 @@ public class ProductController {
         }
     }
 
-
     @DeleteMapping("/{productId}/favorite")
     public ResponseEntity<String> removeFavoriteProduct(
             @RequestParam Long userId,
@@ -101,7 +95,6 @@ public class ProductController {
         String message = productService.removeFavoriteProduct(userId, productId);
         return ResponseEntity.ok(message);
     }
-
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ProductResponseDto>> getProductByUserId(@PathVariable Long userId) {
@@ -114,7 +107,6 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("/{userId}/favorites")
     public ResponseEntity<?> getFavoriteProducts(@PathVariable Long userId) {
         List<Object> favoriteProducts = productService.getFavoriteProductsByUserId(userId);
@@ -126,34 +118,52 @@ public class ProductController {
         return ResponseEntity.ok(favoriteProducts);
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return ResponseEntity.ok("해당 상품이 삭제되었습니다.");
     }
 
-
     @GetMapping("/search")
-    public ResponseEntity<List<ProductEntity>> searchProductsByTitle(@RequestParam String title) {
-        List<ProductEntity> products = productService.searchProductByTitle(title);
-        return ResponseEntity.ok(products);
+    public ResponseEntity<List<ProductResponseDto>> searchProductsByTitle(
+            @RequestParam Long userId,
+            @RequestParam String title) {
+        List<ProductResponseDto> searchResults = filterService.getSearchResults(userId, title);
+        return ResponseEntity.ok(searchResults);
     }
 
+    @GetMapping("/filter")
+    public ResponseEntity<List<ProductResponseDto>> filterProducts(
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) Long regionId,
+            @RequestParam(required = false) String categoryName,
+            @RequestParam(required = false) String sortBy,
+            @RequestParam(required = false) Integer fixedMaxPrice,
+            @RequestParam(required = false, defaultValue = "0") Integer minPrice,
+            @RequestParam(required = false, defaultValue = "100000000") Integer maxPrice
+    ) {
+        List<ProductEntity> products;
 
-    @GetMapping("/category/{categoryId}")
-    public ResponseEntity<List<ProductEntity>> getProductsByCategory(@PathVariable Long categoryId) {
-        List<ProductEntity> products = productService.getProductsByCategory(categoryId);
-        return ResponseEntity.ok(products);
+        if (categoryId != null) {
+            products = filterService.filterProductsByCategory(categoryId);
+        } else if (regionId != null) {
+            products = filterService.filterProductsByRegion(regionId);
+        } else if (categoryName != null) {
+            products = filterService.filterProductsByCategoryName(categoryName);
+        } else if (fixedMaxPrice != null) {
+            products = filterService.filterProductsByFixedMaxPrice(fixedMaxPrice);
+        } else if (sortBy != null) {
+            products = filterService.sortProducts(sortBy);
+        } else {
+            products = filterService.filterProductsByPriceRange(minPrice, maxPrice);
+        }
+
+        List<ProductResponseDto> response = products.stream()
+                .map(ProductResponseDto::new)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(response);
     }
-
-
-    @GetMapping("/region/{regionId}")
-    public ResponseEntity<List<ProductEntity>> getProductsByRegion(@PathVariable Long regionId) {
-        List<ProductEntity> products = productService.getProductByRegion(regionId);
-        return ResponseEntity.ok(products);
-    }
-
 
     @GetMapping("/status")
     public ResponseEntity<List<ProductEntity>> getProductsByStatus(@RequestParam ProductStatus status) {
@@ -161,74 +171,11 @@ public class ProductController {
         return ResponseEntity.ok(products);
     }
 
-
     @GetMapping("/top")
     public ResponseEntity<List<ProductEntity>> getTop10Products() {
         List<ProductEntity> products = productService.getTop10Products();
         return ResponseEntity.ok(products);
     }
-
-
-    @GetMapping("/category-name")
-    public ResponseEntity<List<ProductResponseDto>> getProductsByCategoryName(@RequestParam String categoryName) {
-        List<ProductEntity> products = productService.getProductsByCategoryName(categoryName);
-
-        List<ProductResponseDto> response = products.stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(response);
-    }
-
-
-    @GetMapping("/sorted-by-created-at-updated-at")
-    public List<ProductEntity> getProductsSortedByCreatedAtAndUpdatedAt() {
-        return productService.getProductsSortedByCreatedAtAndUpdatedAt();
-    }
-
-
-    @GetMapping("/sorted-by-created-at")
-    public List<ProductEntity> getProductsSortedByCreatedAt() {
-        return productService.getProductsSortedByCreatedAt();
-    }
-
-
-    @GetMapping("/sorted-by-updated-at")
-    public List<ProductEntity> getProductsSortedByUpdatedAt() {
-        return productService.getProductsSortedByUpdatedAt();
-    }
-
-
-    @GetMapping("/price-range")
-    public ResponseEntity<List<ProductResponseDto>> getProductsByPriceRange(
-            @RequestParam(defaultValue = "0") int minPrice,
-            @Parameter(
-                    schema = @Schema(allowableValues = {"0","5000", "10000", "20000"}),
-                    in = ParameterIn.QUERY
-            )
-            @RequestParam int maxPrice) {
-
-        List<ProductEntity> products = productService.getProductsByPriceRangeAndSort(minPrice, maxPrice);
-
-        List<ProductResponseDto> response = products.stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
-
-        return ResponseEntity.ok(response);
-    }
-
-
-    @GetMapping("/price-range/{minPrice}/{maxPrice}")
-    public ResponseEntity<List<ProductResponseDto>> getProductsByCustomPriceRange(
-            @PathVariable int minPrice,
-            @PathVariable int maxPrice) {
-        List<ProductEntity> products = productService.getProductsByPriceRangeAndSort(minPrice, maxPrice);
-        List<ProductResponseDto> response = products.stream()
-                .map(product -> new ProductResponseDto(product))
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
-    }
-
 
     @GetMapping("/user/status")
     public List<ProductEntity> getProductByUserIdAndStatus(@RequestParam Long userId, @RequestParam ProductStatus status) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,9 +42,5 @@ public class ViewedProductService {
         return viewedProductRepository.findByUserId(userId).stream()
                 .map(viewedProduct -> viewedProduct.getProduct().getId())
                 .collect(Collectors.toSet());
-    }
-
-    public List<ViewedProductEntity> getViewedProductsByUser(Long userId) {
-        return viewedProductRepository.findByUserId(userId);
     }
 }

@@ -12,7 +12,7 @@ import com.carrotzmarket.api.domain.productImage.service.ProductImageService;
 import com.carrotzmarket.api.domain.region.service.RegionService;
 import com.carrotzmarket.api.domain.transaction.repository.ProductTransactionRepository;
 import com.carrotzmarket.api.domain.user.dto.temp.ProductSummaryDto;
-import com.carrotzmarket.api.domain.user.dto.temp.SellerProfile;
+import com.carrotzmarket.api.domain.user.dto.temp.SellerProfileDto;
 import com.carrotzmarket.api.domain.user.repository.UserRepository;
 import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.api.domain.viewedProduct.service.ViewedProductService;
@@ -47,7 +47,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ViewedProductService viewedProductService;
     private final ProductTransactionRepository productTransactionRepository;
-    private final UserMannerService userMannerService;
+    private final UserMannerService userService;
 
     public ProductEntity findProductById(Long id) {
         return productRepository.findById(id)
@@ -92,8 +92,10 @@ public class ProductService {
 
 
     public void deleteProduct(Long id) {
+        favoriteProductRepository.deleteByProductId(id);
+
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
 
         productRepository.delete(product);
     }
@@ -298,10 +300,15 @@ public class ProductService {
         UserEntity seller = userRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다."));
 
-        SellerProfile sellerProfile = new SellerProfile(
+        Double mannerTemperature = userRepository.findMannerTemperatureById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("판매자의 매너 온도를 찾을 수 없습니다."));
+
+
+        SellerProfileDto sellerProfile = new SellerProfileDto(
                 seller.getId(),
                 seller.getLoginId(),
-                seller.getProfileImageUrl()
+                seller.getProfileImageUrl(),
+                mannerTemperature
         );
 
         List<ProductEntity> otherProducts = productRepository.findByUserId(sellerId)
@@ -345,7 +352,7 @@ public class ProductService {
         productTransactionRepository.save(transaction);
 
         // 판매자의 매너 온도 업데이트
-        userMannerService.updateMannerTemperature(transaction.getSellerId());
+        userService.updateMannerTemperature(transaction.getSellerId());
     }
 
     public ProductResponseDto getProductById(Long id, Long userId) {
@@ -395,66 +402,5 @@ public class ProductService {
     public List<ProductEntity> getProductByUserIdAndStatus(Long userId, ProductStatus status) {
         return productRepository.findByUserIdAndStatus(userId, status);
     }
-
-
-    public List<ProductEntity> getProductsByCategory(Long categoryId) {
-        return productRepository.findByCategoryId(categoryId);
-    }
-
-
-    public List<ProductEntity> getProductsByCategoryName(String categoryName) {
-        return productRepository.findByCategoryNameContaining(categoryName);
-    }
-
-
-    public List<ProductEntity> getProductsSortedByCreatedAtAndUpdatedAt() {
-        return productRepository.findAllByOrderByCreatedAtDescUpdatedAtDesc();
-    }
-
-
-    public List<ProductEntity> getProductsSortedByCreatedAt() {
-        return productRepository.findAllByOrderByCreatedAtDesc();
-    }
-
-
-    public List<ProductEntity> getProductsSortedByUpdatedAt() {
-        return productRepository.findAllByOrderByUpdatedAtDesc();
-    }
-
-
-    public List<ProductEntity> getProductsByPriceRangeAndSort(int minPrice, int maxPrice) {
-        List<ProductEntity> products = productRepository.findByPriceBetween(minPrice, maxPrice);
-        return products.stream()
-                .sorted(Comparator.comparing(ProductEntity::getCreatedAt)
-                        .thenComparing(ProductEntity::getUpdatedAt)
-                        .reversed())
-                .collect(Collectors.toList());
-    }
-
-
-    public List<ProductEntity> getProductsByPriceRange(int minPrice, int maxPrice) {
-        return productRepository.findByPriceBetween(minPrice, maxPrice);
-    }
-
-
-    public List<ProductEntity> getProductsByPriceRangeAndSortCustom(int minPrice, int maxPrice) {
-        return productRepository.findByPriceBetween(minPrice, maxPrice);
-    }
-
-
-    public List<ProductResponseDto> getSearchResults(Long userId, String title) {
-        List<ProductEntity> products = productRepository.findByTitleContaining(title);
-
-        Set<Long> viewedProductIds = viewedProductService.getViewedProductIds(userId);
-
-        return products.stream()
-                .map(product -> new ProductResponseDto(
-                        product,
-                        productImageService.getProductImageByProductId(product.getId()).stream()
-                                .map(ProductImageEntity::getImageUrl)
-                                .collect(Collectors.toList()),
-                        viewedProductIds.contains(product.getId())
-                ))
-                .collect(Collectors.toList());
-    }
 }
+

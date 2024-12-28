@@ -30,9 +30,7 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     List<ProductEntity> findByCategoryId(Long categoryId);
 
     List<ProductEntity> findByCategoryNameContaining(String categoryName);
-
-    List<ProductEntity> findAllByOrderByCreatedAtDescUpdatedAtDesc();
-
+    
     List<ProductEntity> findAllByOrderByCreatedAtDesc();
 
     List<ProductEntity> findAllByOrderByUpdatedAtDesc();
