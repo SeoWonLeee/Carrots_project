@@ -1,53 +1,59 @@
 package com.carrotzmarket.api.domain.user.converter;
 
-import com.carrotzmarket.api.domain.region.repository.RegionRepository;
-import com.carrotzmarket.api.domain.user.dto.UserRegisterRequestDto;
-import com.carrotzmarket.api.domain.user.dto.UserResponseDto;
+import com.carrotzmarket.api.common.api.ResponseInterface;
+import com.carrotzmarket.api.common.status.UserResponseStatus;
+import com.carrotzmarket.api.domain.user.dto.response.UserSession;
+import com.carrotzmarket.api.domain.user.dto.request.UserRegisterRequest;
+import com.carrotzmarket.api.domain.user.dto.response.UserResponse;
 import com.carrotzmarket.db.region.RegionEntity;
 import com.carrotzmarket.db.user.UserEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.time.LocalDateTime;
-import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class UserConverter {
 
-    private final RegionRepository regionRepository;
+    public UserEntity toEntity(UserRegisterRequest request, RegionEntity region, String profileImageUrl) {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setLoginId(request.getLoginId());
+        userEntity.setPassword(request.getPassword());
+        userEntity.setEmail(request.getEmail());
+        userEntity.setPhone(request.getPhone());
+        userEntity.setProfileImageUrl(profileImageUrl);
+        userEntity.addRegion(region);
+        return userEntity;
+    }
 
-    @Value("/path/to/uploads")
-    private String uploadDir;
-
-    @Value("${default.profile.image:/uploads/profile-images/default-profile.jpg}")
-    private String defaultProfileImageUrl;
-
-    // DTO -> Entity 변환
-    public UserEntity toEntity(UserRegisterRequestDto request, RegionEntity region, String profileImageUrl) {
-        return UserEntity.builder()
-                .loginId(request.getLoginId())
-                .password(request.getPassword())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .birthday(request.getBirthday())
-                .profileImageUrl(profileImageUrl)
-                .region(region.getName())
+    public UserSession toSession(UserResponse response) {
+        return  UserSession.builder()
+                .id(response.getId())
+                .loginId(response.getLoginId())
+                .profileImageUrl(response.getProfileImageUrl())
+                .region(response.getRegion())
                 .build();
     }
 
-    // Entity -> DTO 변환
-    public UserResponseDto toResponse(UserEntity userEntity) {
-        return UserResponseDto.builder()
+    public ResponseInterface toResponse(UserEntity userEntity, UserResponseStatus status, String message) {
+
+        if (userEntity == null) {
+            return UserResponse.builder()
+                    .status(status.name())
+                    .message(message)
+                    .build();
+        }
+
+        return UserResponse.builder()
                 .id(userEntity.getId())
                 .loginId(userEntity.getLoginId())
                 .email(userEntity.getEmail())
                 .phone(userEntity.getPhone())
                 .profileImageUrl(userEntity.getProfileImageUrl())
-                .region(userEntity.getRegion())
+                .region(userEntity.getUserRegion())
                 .createdAt(userEntity.getCreatedAt())
-                .lastLoginAt(userEntity.getLastLoginAt())
+                .failedLoginAttemptsCount(userEntity.getFailedLoginAttempts())
+                .status(status.name())
+                .message(message)
                 .build();
     }
 }

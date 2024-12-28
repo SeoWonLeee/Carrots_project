@@ -1,12 +1,12 @@
 package com.carrotzmarket.api.domain.product.controller;
 
-import com.carrotzmarket.api.domain.category.dto.CategoryDto;
 import com.carrotzmarket.api.domain.product.dto.ProductCreateRequestDto;
 import com.carrotzmarket.api.domain.product.dto.ProductResponseDto;
 import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
 import com.carrotzmarket.api.domain.product.repository.ProductRepository;
 import com.carrotzmarket.api.domain.product.service.ProductService;
-import com.carrotzmarket.api.domain.user.service.UserService;
+import com.carrotzmarket.api.domain.user.service.UserManagementService;
+import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,7 +28,7 @@ public class ProductController {
 
     private final ProductService productService;
     private final ProductRepository productRepository;
-    private final UserService userService;
+    private final UserMannerService userMannerService;
 
     @PostMapping(consumes = "multipart/form-data")
     public ResponseEntity<String> createProduct(@ModelAttribute @Valid ProductCreateRequestDto productCreateRequestDto) {
@@ -78,7 +78,7 @@ public class ProductController {
                 .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
         Long sellerId = product.getUserId();
 
-        userService.updateMannerTemperature(sellerId);
+        userMannerService.updateMannerTemperature(sellerId);
 
         return ResponseEntity.ok("판매자의 매너 온도가 업데이트 되었습니다.");
     }

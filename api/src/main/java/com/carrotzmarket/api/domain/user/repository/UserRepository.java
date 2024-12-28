@@ -38,6 +38,7 @@ public class UserRepository{
         em.detach(userEntity);
         return userEntity;
     }
+
     public Optional<UserEntity> findByLoginId(String loginId) {
         return em.createQuery("SELECT u FROM UserEntity u WHERE u.loginId = :loginId", UserEntity.class)
                 .setParameter("loginId", loginId)
@@ -45,20 +46,15 @@ public class UserRepository{
                 .findFirst();
     }
 
-
-    public void deleteUserRegionsByUserId(Long userId) {
-        em.createQuery("DELETE FROM UserRegionEntity ur WHERE ur.user.id = :userId")
-                .setParameter("userId", userId)
-                .executeUpdate();
+    public void delete(UserEntity user) {
+        em.remove(user);
     }
-
 
     public void deleteByLoginId(String loginId) {
         UserEntity user = em.createQuery("SELECT u FROM UserEntity u WHERE u.loginId = :loginId", UserEntity.class)
                 .setParameter("loginId", loginId)
                 .getSingleResult();
 
-        deleteUserRegionsByUserId(user.getId());
         em.remove(user);
     }
 

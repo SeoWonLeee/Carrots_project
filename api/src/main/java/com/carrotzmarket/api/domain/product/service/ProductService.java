@@ -11,10 +11,10 @@ import com.carrotzmarket.api.domain.productImage.service.FileUploadService;
 import com.carrotzmarket.api.domain.productImage.service.ProductImageService;
 import com.carrotzmarket.api.domain.region.service.RegionService;
 import com.carrotzmarket.api.domain.transaction.repository.ProductTransactionRepository;
-import com.carrotzmarket.api.domain.user.dto.ProductSummaryDto;
-import com.carrotzmarket.api.domain.user.dto.SellerProfileDto;
+import com.carrotzmarket.api.domain.user.dto.temp.ProductSummaryDto;
+import com.carrotzmarket.api.domain.user.dto.temp.SellerProfile;
 import com.carrotzmarket.api.domain.user.repository.UserRepository;
-import com.carrotzmarket.api.domain.user.service.UserService;
+import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.api.domain.viewedProduct.service.ViewedProductService;
 import com.carrotzmarket.db.category.CategoryEntity;
 import com.carrotzmarket.db.favoriteProduct.FavoriteProductEntity;
@@ -47,7 +47,7 @@ public class ProductService {
     private final UserRepository userRepository;
     private final ViewedProductService viewedProductService;
     private final ProductTransactionRepository productTransactionRepository;
-    private final UserService userService;
+    private final UserMannerService userMannerService;
 
     public ProductEntity findProductById(Long id) {
         return productRepository.findById(id)
@@ -298,7 +298,7 @@ public class ProductService {
         UserEntity seller = userRepository.findById(sellerId)
                 .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다."));
 
-        SellerProfileDto sellerProfile = new SellerProfileDto(
+        SellerProfile sellerProfile = new SellerProfile(
                 seller.getId(),
                 seller.getLoginId(),
                 seller.getProfileImageUrl()
@@ -345,7 +345,7 @@ public class ProductService {
         productTransactionRepository.save(transaction);
 
         // 판매자의 매너 온도 업데이트
-        userService.updateMannerTemperature(transaction.getSellerId());
+        userMannerService.updateMannerTemperature(transaction.getSellerId());
     }
 
     public ProductResponseDto getProductById(Long id, Long userId) {

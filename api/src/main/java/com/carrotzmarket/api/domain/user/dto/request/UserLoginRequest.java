@@ -1,4 +1,4 @@
-package com.carrotzmarket.api.domain.user.dto;
+package com.carrotzmarket.api.domain.user.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserLoginRequestDto {
+public class UserLoginRequest {
 
     @NotNull
     private String loginId;
