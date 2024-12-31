@@ -73,4 +73,9 @@ public class UserManagementService {
         return userRepository.findByLoginId(loginId)
                 .orElseThrow(() -> new ApiException(UserErrorCode.USER_NOT_FOUND));
     }
+
+    public UserEntity findUserEntityByUserId(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ApiException(UserErrorCode.USER_NOT_FOUND));
+    }
 }

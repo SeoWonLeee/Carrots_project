@@ -55,6 +55,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     testImplementation 'com.icegreen:greenmail:1.6.10'
 
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 }
 
 test {
