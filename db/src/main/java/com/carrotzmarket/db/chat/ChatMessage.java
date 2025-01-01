@@ -20,9 +20,6 @@ public class ChatMessage {
     @Column(name = "sender", nullable = false)
     private String sender;
 
-    @Column(name = "receiver", nullable = false)
-    private String receiver;
-
     @Column(name = "message", nullable = false)
     private String message;
 

@@ -12,8 +12,15 @@ public class ChatMessageDTO {
 
     private Long id;
     private String sender;
-    private String receiver;
     private String message;
     private LocalDateTime timestamp;
+
+    private String sellerId;
+    private String productTitle;
+    private int productPrice;
+    private String sellerProfileURL;
+    private String productImageURL;
+    private String productStatus;
+    private double sellerManner;
 
 }

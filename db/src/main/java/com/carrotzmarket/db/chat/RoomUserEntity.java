@@ -31,4 +31,6 @@ public class RoomUserEntity {
     public void onPrePersist() {
         this.joinedAt = LocalDateTime.now();
     }
+
+
 }

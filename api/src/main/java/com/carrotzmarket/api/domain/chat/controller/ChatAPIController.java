@@ -3,6 +3,7 @@ package com.carrotzmarket.api.domain.chat.controller;
 import com.carrotzmarket.api.common.annotation.Login;
 import com.carrotzmarket.api.domain.chat.dto.ChatMessageDTO;
 import com.carrotzmarket.api.domain.chat.dto.ChatRoomDto;
+import com.carrotzmarket.api.domain.chat.dto.ResponseCreateChat;
 import com.carrotzmarket.api.domain.chat.repository.ChatMessageRepository;
 import com.carrotzmarket.api.domain.chat.repository.ChatRoomRepository;
 import com.carrotzmarket.api.domain.chat.service.ChatRoomService;
@@ -16,6 +17,7 @@ import com.carrotzmarket.db.chat.ChatRoomEntity;
 import com.carrotzmarket.db.chat.RoomUserEntity;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.user.UserEntity;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -58,14 +60,13 @@ public class ChatAPIController {
         ChatRoomEntity existingChatRoom  = chatService.findChatRoomByProductAndUsers(productId, buyer.getId());
         if (existingChatRoom  != null) {
             log.info("기존 채팅방 반환");
-            ChatRoomDto chatRoomDto = new ChatRoomDto(
+            ResponseCreateChat chatRoomDto = new ResponseCreateChat(
                     existingChatRoom.getId(),
                     existingChatRoom.getProduct().getId(),
                     existingChatRoom.getProduct().getTitle(),
                     seller.getLoginId(),
                     seller.getProfileImageUrl(),
-                    existingChatRoom.getMessages().isEmpty() ? "" : existingChatRoom.getMessages().get(existingChatRoom.getMessages().size() - 1).getMessage(),
-                    "hi",null,0
+                    productResponse.getStatus().name()
             );
             return ResponseEntity.ok(chatRoomDto);
         }
@@ -87,14 +88,13 @@ public class ChatAPIController {
         chatRoomService.save(buyerRoomUser);
         chatRoomService.save(sellerRoomUser);
 
-        ChatRoomDto chatRoomDto = new ChatRoomDto(
+        ResponseCreateChat chatRoomDto = new ResponseCreateChat(
                 chatRoom.getId(),
                 chatRoom.getProduct().getId(),
                 chatRoom.getProduct().getTitle(),
                 seller.getLoginId(),
                 seller.getProfileImageUrl(),
-                chatRoom.getMessages().isEmpty() ? "" : chatRoom.getMessages().get(chatRoom.getMessages().size() - 1).getMessage(),
-                "hi",null,0
+                productResponse.getStatus().name()
         );
 
         return ResponseEntity.ok(chatRoomDto);
@@ -107,39 +107,69 @@ public class ChatAPIController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        List<RoomUserEntity> results = chatRoomService.viewAllChatRoomsByUserID(userSession.getId());
+        // 사용자가 속한 채팅방을 가져온다.
+        List<RoomUserEntity> userChatRooms = chatRoomService.viewAllChatRoomsByUserID(userSession.getId());
 
-        List<ChatRoomDto> answer = new ArrayList<>();
-        for (RoomUserEntity roomUser : results) {
-            ChatRoomEntity chatRoom = roomUser.getChatRoom();
-            UserEntity partner = chatRoom.getSeller().getId().equals(userSession.getId())
-                    ? chatRoom.getBuyer()
-                    : chatRoom.getSeller();
+        for (RoomUserEntity userChatRoom : userChatRooms) {
+            System.out.println("userChatRoom = " + userChatRoom);
+            String loginId = userChatRoom.getUser().getLoginId();
+            System.out.println("loginId = " + loginId);
+        }
 
-            answer.add(new ChatRoomDto(
+
+        // 사용자가 속한 채팅방 엔터티를 가져온다.
+        List<ChatRoomDto> chatRoomDto = new ArrayList<>();
+        for (RoomUserEntity userChatRoom : userChatRooms) {
+
+            ChatRoomEntity chatRoom = chatService.findById(userChatRoom.getChatRoom().getId());
+            ProductEntity product = productService.findProductById(chatRoom.getProduct().getId());
+
+            UserEntity otherUser = chatRoom.getSeller().getId().equals(userSession.getId()) ? chatRoom.getBuyer() : chatRoom.getSeller();
+            LocalDateTime lastMessageDate = chatRoom.getLastMessageDate();
+            String lastMessage = chatRoom.getLastMessage();
+
+            chatRoomDto.add(new ChatRoomDto(
                     chatRoom.getId(),
-                    chatRoom.getProduct().getId(),
-                    chatRoom.getProduct().getTitle(),
-                    partner.getLoginId(),
-                    partner.getProfileImageUrl(),
-                    chatRoom.getMessages().isEmpty() ? "" : chatRoom.getMessages().get(chatRoom.getMessages().size() - 1).getMessage(),
-                    "hi",null,0
+                    product.getId(),
+                    product.getTitle(),
+                    product.getPrice(),
+                    "image-url",
+                    otherUser.getLoginId(),
+                    otherUser.getMannerTemperature(),
+                    otherUser.getProfileImageUrl(),
+                    lastMessage,
+                    lastMessageDate,
+                    0,
+                    product.getStatus().name(),
+                    "image-url"
             ));
         }
-        return ResponseEntity.ok(answer);
+
+        return ResponseEntity.ok(chatRoomDto);
     }
 
     @GetMapping("/{roomId}")
     public List<ChatMessageDTO> getChatHistory(@PathVariable("roomId") Long roomId) {
+
+        ChatRoomEntity chatRoom = chatService.findById(roomId);
+        ProductEntity product = chatRoom.getProduct();
+        UserEntity user = userManagementService.findUserEntityByUserId(product.getUserId());
+
         log.info("채팅 내역 요청 - roomId: {}", roomId);
         List<ChatMessage> chatMessages = chatMessageRepository.findByRoomIdOrderByTimestamp(roomId);
         return chatMessages.stream()
                 .map(msg -> new ChatMessageDTO(
                         msg.getId(),
                         msg.getSender(),
-                        msg.getReceiver(),
                         msg.getMessage(),
-                        msg.getTimestamp()
+                        msg.getTimestamp(),
+                        user.getLoginId(),
+                        product.getTitle(),
+                        product.getPrice()
+                        ,"default.png"
+                        , user.getProfileImageUrl()
+                        ,product.getStatus().name(),
+                        user.getMannerTemperature()
                 ))
                 .collect(Collectors.toList());
     }

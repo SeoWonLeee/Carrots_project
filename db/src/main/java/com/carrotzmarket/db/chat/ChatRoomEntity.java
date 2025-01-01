@@ -43,4 +43,18 @@ public class ChatRoomEntity {
             this.createdAt = LocalDateTime.now();
         }
     }
+
+    public String getLastMessage() {
+        if (this.messages.isEmpty()) {
+            return "최근 대화가 없습니다.";
+        }
+        return this.messages.get(0).getMessage();
+    }
+
+    public LocalDateTime getLastMessageDate() {
+        if (this.messages.isEmpty()) {
+            return null;
+        }
+        return this.messages.get(0).getTimestamp();
+    }
 }

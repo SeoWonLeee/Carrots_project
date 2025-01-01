@@ -24,4 +24,9 @@ public class RoomUserRepository {
                 .getResultList();
     }
 
+    public RoomUserEntity findByRoomId(Long roomId) {
+        return em.createQuery("SELECT R FROM RoomUserEntity R WHERE R.id = : roomId", RoomUserEntity.class)
+                .setParameter("roomId", roomId)
+                .getResultStream().findAny().orElse(null);
+    }
 }

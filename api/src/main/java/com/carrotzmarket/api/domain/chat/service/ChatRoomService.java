@@ -1,6 +1,7 @@
 package com.carrotzmarket.api.domain.chat.service;
 
 import com.carrotzmarket.api.domain.chat.repository.RoomUserRepository;
+import com.carrotzmarket.db.chat.ChatRoomEntity;
 import com.carrotzmarket.db.chat.RoomUserEntity;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
