@@ -1,8 +1,10 @@
 import { React, useState } from "react";
+import { useAuth } from '../user/AuthContext';
 import "../../style/Header.css";
 import { Link } from "react-router-dom";
 
 const Header = () => {
+    const { userData, isAuthenticated, logout } = useAuth();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
@@ -35,7 +37,7 @@ const Header = () => {
 
                         <div className="header-user-nav">
 
-                            {true ? (
+                            {isAuthenticated ? (
                                 <>
                                     <Link onClick={toggleDropdown}>
                                         <div className="header-user-profile">
@@ -56,6 +58,7 @@ const Header = () => {
                                                     <li>마이페이지</li>
                                                     <li>물건 판매하기</li>
                                                     <li>나의 채팅방</li>
+                                                    <li onClick={logout}>로그아웃</li>
                                                 </ul>
                                             </div>
                                         )}
@@ -63,11 +66,11 @@ const Header = () => {
                                 </>
                             ) : (
                                 <>
-                                    <Link to='/' className="header-user-login-btn">
+                                    <Link to='/login' className="header-user-login-btn">
                                         로그인
                                     </Link>
 
-                                    <Link to='/' className="header-user-signup-btn">
+                                    <Link to='/signup' className="header-user-signup-btn">
                                         회원가입
                                     </Link>
                                 </>
