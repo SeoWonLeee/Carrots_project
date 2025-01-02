@@ -1,0 +1,79 @@
+a#main-content {
+    padding: 20px;
+}
+
+
+.image-slider {
+    position: relative;
+    width: 100%; /* 슬라이드 영역 크기 */
+    overflow: hidden; /* 슬라이드 영역을 벗어난 이미지를 숨김 */
+}
+
+.slider-images {
+    display: flex; /* 이미지를 가로로 배치 */
+    transition: transform 0.5s ease-in-out; /* 애니메이션 효과 */
+}
+
+.slider-image {
+    width: 100%; /* 한 슬라이드의 이미지를 100%로 설정 */
+    height: auto;
+}
+
+.slider-buttons {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.slider-buttons button {
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 30px;
+}
+
+.slider-buttons button:hover {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.slider-arrow {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    font-size: 30px;
+    color: #e84500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+}
+
+.slider-arrow span::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    margin-left: -3px;
+    margin-top: -3px;
+    width: 20px;
+    height: 20px;
+    border-top: 3px solid #000000;
+    border-right: 3px solid #000000;
+
+}
+
+.slider-arrow.prev span::before {
+    margin-right: 20px;
+    transform: rotate(225deg); /* 왼쪽 화살표 */
+}
+
+.slider-arrow.next span::before {
+    margin-left: -20px;
+    transform: rotate(45deg); /* 오른쪽 화살표 */
+}

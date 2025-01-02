@@ -3,6 +3,7 @@ import Header from "./components/header/Header";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import Layout from "./components/Layout";
 import ContentCategory from "./components/content/ContentCategory";
+import MainContent from "./components/content/MainContent";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Routes>
         <Route path="/" element={
               <div>
+                <MainContent/>
                 <ContentCategory />
               </div>
             } />
