@@ -5,6 +5,7 @@
     width: 100%;
     height: 72px;
     z-index: 1000;
+    background-color: #fff;
 }
 
 .header {
@@ -26,7 +27,7 @@
     margin-left: -20px;
 }
 
-.header-nav .header-logo img{
+.header-nav .header-logo img {
     width: 64px;
     height: 35px;
 }
@@ -43,7 +44,7 @@
     padding: 8px 150px;
 }
 
-.header-nav .header-category li{
+.header-nav .header-category li {
     font-family: 'Paperlogy-5';
     display: inline-block;
     margin-right: 30px;
@@ -51,11 +52,11 @@
     font-weight: bold;
 }
 
-.header-nav .header-category li a{
+.header-nav .header-category li a {
     transition: color 0.3s ease, transform 0.3s ease;
 }
 
-.header-nav .header-category li a:hover{
+.header-nav .header-category li a:hover {
     color: #898a8b;
 }
 
@@ -69,7 +70,7 @@
 
 /* 헤더 유저 시작 */
 
-.header-nav .header-user-nav .header-user-login-btn{
+.header-nav .header-user-nav .header-user-login-btn {
     font-family: 'Paperlogy-5';
     width: 87px;
     height: 32px;
@@ -83,7 +84,7 @@
     margin-right: 10px;
 }
 
-.header-nav .header-user-nav .header-user-signup-btn{
+.header-nav .header-user-nav .header-user-signup-btn {
     font-family: 'Paperlogy-5';
     width: 87px;
     height: 32px;
@@ -97,7 +98,7 @@
     margin-right: 10px;
 }
 
-.header-nav .header-user-nav .header-user-mypage-btn{
+.header-nav .header-user-nav .header-user-mypage-btn {
     font-family: 'Paperlogy-5';
     width: 87px;
     height: 32px;
@@ -111,7 +112,7 @@
     margin-right: 10px;
 }
 
-.header-nav .header-user-nav .header-user-logout-btn{
+.header-nav .header-user-nav .header-user-logout-btn {
     font-family: 'Paperlogy-5';
     width: 87px;
     height: 32px;
@@ -129,19 +130,19 @@
 }
 
 
-.header-nav .header-user-nav .header-user-login-btn:hover{
+.header-nav .header-user-nav .header-user-login-btn:hover {
     background-color: #fadacb;
 }
 
-.header-nav .header-user-nav .header-user-mypage-btn:hover{
+.header-nav .header-user-nav .header-user-mypage-btn:hover {
     background-color: #fadacb;
 }
 
-.header-nav .header-user-nav .header-user-logout-btn:hover{
+.header-nav .header-user-nav .header-user-logout-btn:hover {
     background-color: #fadacb;
 }
 
-.header-nav .header-user-nav .header-user-signup-btn:hover{
+.header-nav .header-user-nav .header-user-signup-btn:hover {
     background-color: #fadacb;
 }
 
