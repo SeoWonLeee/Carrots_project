@@ -20,6 +20,9 @@ configurations {
 }
 
 repositories {
+    maven {
+        url = uri(System.getProperty("user.home") + "/.m2/repository")
+    }
     mavenCentral()
 }
 
@@ -55,6 +58,10 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-mail'
     testImplementation 'com.icegreen:greenmail:1.6.10'
 
+    // SSE EventBus
+    implementation files('libs/sse-eventbus-2.0.2-SNAPSHOT.jar')
+    implementation 'org.reactivestreams:reactive-streams:1.0.3'
+
 }
 
 test {
@@ -69,6 +76,3 @@ bootJar {
 jar {
     enabled = false
 }
-
-
-
