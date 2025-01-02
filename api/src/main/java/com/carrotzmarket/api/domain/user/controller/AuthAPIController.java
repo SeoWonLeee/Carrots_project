@@ -27,7 +27,6 @@ public class AuthAPIController {
     @PostMapping("/login")
     public ResponseEntity<ResponseInterface> login(@RequestBody UserLoginRequest request, HttpServletRequest servlet) {
         ResponseInterface response = userLoginService.login(request);
-
         UserResponse findUser = (UserResponse) userLoginService.login(request);
         UserSession userSession = userConverter.toSession(findUser);
 

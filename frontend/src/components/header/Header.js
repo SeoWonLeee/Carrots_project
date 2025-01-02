@@ -1,14 +1,24 @@
-import { React, useState } from "react";
+import { React, useEffect, useState } from "react";
 import { useAuth } from '../user/AuthContext';
 import "../../style/Header.css";
 import { Link } from "react-router-dom";
 
 const Header = () => {
     const { userData, isAuthenticated, logout } = useAuth();
+    const [ user, setUser] = useState('');
+
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
+
+    useEffect(() => {
+        setIsDropdownOpen(false);
+        const storedUser = sessionStorage.getItem('userData');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, [userData]);
 
     return (
         <div id="header">
@@ -42,10 +52,10 @@ const Header = () => {
                                     <Link onClick={toggleDropdown}>
                                         <div className="header-user-profile">
                                             <div className="header-user-profile-img">
-                                                <img src="/images/profile_default.png" />
+                                                <img src={`http://127.0.0.1:8080/images/${user.profileImageUrl}`} />
                                             </div>
                                             <div className="header-user-profile-loginId">
-                                                <span className="header-loginId">매누</span>
+                                                <span className="header-loginId">{user.loginId}</span>
                                                 <div className="user-menu"></div>
                                             </div>
                                         </div>

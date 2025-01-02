@@ -6,6 +6,7 @@ import ContentCategory from "./components/content/ContentCategory";
 import MainContent from "./components/content/MainContent";
 import LoginForm from "./components/user/LoginForm";
 import { AuthProvider } from "./components/user/AuthContext";
+import SignupForm from "./components/user/SignupForm";
 
 
 function App() {
@@ -20,8 +21,8 @@ function App() {
                 <ContentCategory />
               </div>
             } />
-          <Route path="/" element={<Header />} />
           <Route path="/login" element={<LoginForm />} />
+          <Route path="/signup" element={<SignupForm />} />
         </Routes>
       </Layout>
       </AuthProvider>
