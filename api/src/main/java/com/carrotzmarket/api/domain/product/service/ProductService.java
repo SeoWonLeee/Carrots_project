@@ -3,6 +3,7 @@ package com.carrotzmarket.api.domain.product.service;
 import com.carrotzmarket.api.domain.category.dto.CategoryDto;
 import com.carrotzmarket.api.domain.category.repository.CategoryRepository;
 import com.carrotzmarket.api.domain.favoriteProduct.repository.FavoriteProductRepository;
+import com.carrotzmarket.api.domain.notification.service.NotificationService;
 import com.carrotzmarket.api.domain.product.dto.ProductCreateRequestDto;
 import com.carrotzmarket.api.domain.product.dto.ProductResponseDto;
 import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
@@ -48,6 +49,7 @@ public class ProductService {
     private final ViewedProductService viewedProductService;
     private final ProductTransactionRepository productTransactionRepository;
     private final UserMannerService userService;
+    private final NotificationService notificationService;
 
     public ProductEntity findProductById(Long id) {
         return productRepository.findById(id)
@@ -254,7 +256,15 @@ public class ProductService {
 
     public ProductResponseDto updateProductStatus(Long id, ProductStatus status) {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        if (status == ProductStatus.SOLD) {
+            List<FavoriteProductEntity> favoriteUsers = favoriteProductRepository.findByProductId(id);
+            for (FavoriteProductEntity favoriteProduct : favoriteUsers) {
+                Long userId = favoriteProduct.getUserId();
+                notificationService.sendProductSoldNotification(userId, id, product.getTitle());
+            }
+        }
 
         product.setStatus(status);
         productRepository.save(product);
