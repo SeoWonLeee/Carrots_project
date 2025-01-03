@@ -46,7 +46,8 @@ public class AuthAPIController {
     }
 
     private void createSession(UserSession userSession,HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(true);
         session.setAttribute("userSession", userSession);
+        request.getSession().setAttribute("userSession", userSession);
     }
 }

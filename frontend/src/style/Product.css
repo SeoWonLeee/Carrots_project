@@ -55,6 +55,8 @@
     /* 빈 영역을 깔끔하게 처리하기 위한 배경색 */
 }
 
+
+
 .slider-container {
     width: 100%;
     height: 100%;
@@ -66,9 +68,8 @@
 .slider-track {
     display: flex;
     transition: transform 0.4s ease-in-out;
-    /* 부드러운 애니메이션 */
     will-change: transform;
-    /* 렌더링 성능 최적화 */
+    transform: translateX(-${currentIndex * 100}%); /* currentIndex에 맞춰 이미지 이동 */
 }
 
 .slide-image {

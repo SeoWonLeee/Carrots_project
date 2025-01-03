@@ -43,6 +43,15 @@ public class UserManagementService {
         }
     }
 
+    public ResponseInterface getUserInfoById(Long id) {
+        try {
+            UserEntity userEntity = findUserEntityByUserId(id);
+            return userConverter.toResponse(userEntity, SUCCESS, "회원 조회 성공");
+        } catch (ApiException e) {
+            return userConverter.toResponse(null, FAILURE, e.getMessage());
+        }
+    }
+
     public ResponseInterface update(UserSession userSession, UserUpdateRequest request, MultipartFile file) {
         UserEntity userEntity = findUserEntityByLoginId(userSession.getLoginId());
 

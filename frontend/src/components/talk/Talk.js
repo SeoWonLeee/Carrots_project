@@ -68,7 +68,7 @@ function Talk() {
             try {
                 const response = await fetch(`http://localhost:8080/talk`, {
                     method: 'GET',
-                    credentials: 'include', // 세션 쿠키 포함
+                    credentials: 'include',
                     headers: {
                         'Content-Type': 'application/json',
                     },
@@ -269,8 +269,8 @@ function Talk() {
 
                                         <div className='tlak-list-product'>
                                             <div className='product-img'>
-                                                {room.productImage ? (
-                                                    <img src={room.productImage} alt={room.productName} />
+                                                {room.productImageURL ? (
+                                                    <img src={`http://127.0.0.1:8080/images/${room.productImageURL}`} alt={room.productName} />
                                                 ) : (
                                                     <img src="/default_product.jpg" alt="Default Product" />
                                                 )}
@@ -329,10 +329,10 @@ function Talk() {
                                             </div>
                                         </div>
 
-                                        <Link to='/' className='talk-product'>
+                                        <Link to={`/product/${currentChatRoom.productId}`} className='talk-product'>
                                             <div className='talk-product-header'>
                                                 <div className='product'>
-                                                    <img src={currentChatRoom.productImage || "/default_product.jpg"} alt={currentChatRoom.productTitle} />
+                                                    <img src={`http://localhost:8080/images/${currentChatRoom.productImageURL}` || "/default_product.jpg"} alt={currentChatRoom.productTitle} />
                                                 </div>
 
                                                 <div className='talk-section'>

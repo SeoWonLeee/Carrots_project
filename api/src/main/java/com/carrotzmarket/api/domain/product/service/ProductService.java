@@ -3,6 +3,7 @@ package com.carrotzmarket.api.domain.product.service;
 import com.carrotzmarket.api.domain.category.dto.CategoryDto;
 import com.carrotzmarket.api.domain.category.repository.CategoryRepository;
 import com.carrotzmarket.api.domain.favoriteProduct.repository.FavoriteProductRepository;
+import com.carrotzmarket.api.domain.image.domain.Image;
 import com.carrotzmarket.api.domain.product.dto.ProductCreateRequestDto;
 import com.carrotzmarket.api.domain.product.dto.ProductResponseDto;
 import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
@@ -49,6 +50,8 @@ public class ProductService {
     private final ProductTransactionRepository productTransactionRepository;
     private final UserMannerService userService;
 
+    private final com.carrotzmarket.api.domain.image.service.ProductImageService productImageService2;
+
     public ProductEntity findProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
@@ -66,26 +69,41 @@ public class ProductService {
                 .userId(request.getUserId())
                 .regionId(request.getRegionId())
                 .category(category)
-                .status(request.getStatus())
+                .status(ProductStatus.ON_SALE)
                 .build();
 
         ProductEntity savedProduct = productRepository.save(product);
 
+        List<Image> images = productImageService2.uploadImages(request.getImages());
+
+
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             List<ProductImageEntity> productImages = new ArrayList<>();
-            for (MultipartFile image : request.getImages()) {
-                try {
-                    String imageUrl = fileUploadService.uploadFile(image);
-                    ProductImageEntity productImage = new ProductImageEntity();
-                    productImage.setProductId(savedProduct.getId());
-                    productImage.setImageUrl(imageUrl);
-                    productImages.add(productImage);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to upload image: " + image.getOriginalFilename(), e);
-                }
+            for (Image image : images) {
+                ProductImageEntity productImage = new ProductImageEntity();
+                productImage.setProductId(savedProduct.getId());
+                productImage.setImageUrl(image.getStoreFileName());
+                productImages.add(productImage);
             }
             productImageService.saveAll(productImages);
         }
+
+
+//        if (request.getImages() != null && !request.getImages().isEmpty()) {
+//            List<ProductImageEntity> productImages = new ArrayList<>();
+//            for (MultipartFile image : request.getImages()) {
+//                try {
+//                    String imageUrl = fileUploadService.uploadFile(image);
+//                    ProductImageEntity productImage = new ProductImageEntity();
+//                    productImage.setProductId(savedProduct.getId());
+//                    productImage.setImageUrl(imageUrl);
+//                    productImages.add(productImage);
+//                } catch (IOException e) {
+//                    throw new RuntimeException("Failed to upload image: " + image.getOriginalFilename(), e);
+//                }
+//            }
+//            productImageService.saveAll(productImages);
+//        }
 
         return savedProduct;
     }

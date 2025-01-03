@@ -124,6 +124,9 @@ public class ChatAPIController {
             ChatRoomEntity chatRoom = chatService.findById(userChatRoom.getChatRoom().getId());
             ProductEntity product = productService.findProductById(chatRoom.getProduct().getId());
 
+            ProductResponseDto productById = productService.getProductById(product.getId());
+
+
             UserEntity otherUser = chatRoom.getSeller().getId().equals(userSession.getId()) ? chatRoom.getBuyer() : chatRoom.getSeller();
             LocalDateTime lastMessageDate = chatRoom.getLastMessageDate();
             String lastMessage = chatRoom.getLastMessage();
@@ -133,7 +136,6 @@ public class ChatAPIController {
                     product.getId(),
                     product.getTitle(),
                     product.getPrice(),
-                    "image-url",
                     otherUser.getLoginId(),
                     otherUser.getMannerTemperature(),
                     otherUser.getProfileImageUrl(),
@@ -141,7 +143,7 @@ public class ChatAPIController {
                     lastMessageDate,
                     0,
                     product.getStatus().name(),
-                    "image-url"
+                    productById.getImageUrls().get(0)
             ));
         }
 

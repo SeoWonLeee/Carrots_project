@@ -4,11 +4,11 @@ import "../../style/createProduct.css";
 const CreateProduct = () => {
     const [product, setProduct] = useState({
         title: "",
-        category: "",
+        categoryId: "",
         description: "",
         price: "",
-        location: "",
-        images: []
+        regionId: "",
+        images: []  // 이미지 상태를 product 객체 안으로 이동
     });
 
     const handleChange = (e) => {
@@ -26,13 +26,46 @@ const CreateProduct = () => {
         } else {
             setProduct((prev) => ({
                 ...prev,
-                images: files,
+                images: files,  // images 상태를 product.images로 수정
             }));
         }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+    
+        const formData = new FormData();
+    
+        // product 객체의 데이터를 formData에 추가
+        Object.entries(product).forEach(([key, value]) => {
+            if (key !== "images") { // images는 제외하고 추가
+                formData.append(key, value);
+            }
+        });
+    
+        // 이미지 파일들을 formData에 추가
+        Array.from(product.images).forEach((image) => {
+            formData.append("images", image); // images로 여러 파일을 첨부
+        });
+    
+        try {
+            const response = await fetch("http://localhost:8080/products", {
+                method: "POST",
+                body: formData,
+                credentials: "include",
+            });
+    
+            if (response.ok) {
+                const data = await response.text(); // ResponseEntity의 메시지 읽기
+                alert("상품 등록 성공: " + data);
+                console.log("서버 응답:", data);
+            } else {
+                console.error("상품 등록 실패:", response.statusText);
+            }
+        } catch (error) {
+            console.error("오류 발생:", error);
+        }
+    
         console.log("상품 등록:", product);
     };
 
@@ -99,17 +132,17 @@ const CreateProduct = () => {
                     <label htmlFor="product-category">카테고리</label>
                     <select
                         id="product-category"
-                        name="category"
-                        value={product.category}
+                        name="categoryId"
+                        value={product.categoryId}
                         onChange={handleChange}
                         required
                     >
                         <option value="">카테고리를 선택하세요</option>
-                        <option value="디지털기기">디지털기기</option>
-                        <option value="가전제품">가전제품</option>
-                        <option value="의류">의류</option>
-                        <option value="생활용품">생활용품</option>
-                        <option value="기타">기타</option>
+                        <option value="1">디지털기기</option>
+                        <option value="2">가전제품</option>
+                        <option value="3">의류</option>
+                        <option value="4">생활용품</option>
+                        <option value="5">기타</option>
                     </select>
                 </div>
 
@@ -148,9 +181,9 @@ const CreateProduct = () => {
                     <input
                         type="text"
                         id="product-location"
-                        name="location"
+                        name="regionId"
                         placeholder="거래 위치를 입력하세요"
-                        value={product.location}
+                        value={product.regionId}
                         onChange={handleChange}
                         required
                     />

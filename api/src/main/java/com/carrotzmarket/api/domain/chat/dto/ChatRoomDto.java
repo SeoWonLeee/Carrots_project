@@ -11,7 +11,6 @@ public class ChatRoomDto {
     private Long productId;
     private String productTitle;
     private int productPrice;
-    private String productImage;
     private String otherUserLoginId;
     private double otherManner;
     private String partnerProfileImage;

@@ -1,5 +1,4 @@
 import React from "react";
-import Header from "./components/header/Header";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 import Layout from "./components/Layout";
 import ContentCategory from "./components/content/ContentCategory";
@@ -28,9 +27,10 @@ function App() {
             <Route path="/login" element={<LoginForm />} />
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/talk" element={<Talk />} />
+            <Route path="/talk/:roomId" element={<Talk />} />
             <Route path="/mypage" element={<Mypage />} />
             <Route path="/sell-product" element={<CreateProduct/>}/>
-            <Route path="/product" element={<Product/>}/>
+            <Route path="/product/:productId" element={<Product/>}/>
           </Routes>
         </Layout>
       </AuthProvider>

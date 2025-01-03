@@ -1,16 +1,26 @@
 package com.carrotzmarket.api.domain.product.controller;
 
+import com.carrotzmarket.api.common.annotation.Login;
+import com.carrotzmarket.api.common.api.Api;
+import com.carrotzmarket.api.common.error.ErrorCode;
+import com.carrotzmarket.api.common.exception.ApiException;
 import com.carrotzmarket.api.domain.product.dto.ProductCreateRequestDto;
 import com.carrotzmarket.api.domain.product.dto.ProductResponseDto;
 import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
 import com.carrotzmarket.api.domain.product.repository.ProductRepository;
 import com.carrotzmarket.api.domain.product.service.FilterService;
 import com.carrotzmarket.api.domain.product.service.ProductService;
+import com.carrotzmarket.api.domain.user.dto.response.UserSession;
 import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
+@Slf4j
 public class ProductController {
 
     private final ProductService productService;
@@ -28,8 +39,15 @@ public class ProductController {
     private final UserMannerService userService;
     private final FilterService filterService;
 
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<String> createProduct(@ModelAttribute @Valid ProductCreateRequestDto productCreateRequestDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createProduct(@ModelAttribute ProductCreateRequestDto productCreateRequestDto, HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        UserSession userSession = (UserSession) session.getAttribute("userSession");
+        log.info("유저 정보 : {}", userSession.getLoginId());
+
+        productCreateRequestDto.setUserId(userSession.getId());
+
         ProductEntity product = productService.createProduct(productCreateRequestDto);
         return ResponseEntity.ok("Product created with ID: " + product.getId());
     }

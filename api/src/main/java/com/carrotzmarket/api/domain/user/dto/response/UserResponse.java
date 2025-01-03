@@ -17,6 +17,7 @@ public class UserResponse extends AbstractUserResponse {
     private LocalDate birthday;
     private String status;
     private String message;
+    private Double manner;
 
     private Integer failedLoginAttemptsCount;
     private LocalDateTime lastFailedLoginTime;
