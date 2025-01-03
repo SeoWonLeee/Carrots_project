@@ -10,6 +10,7 @@ import SignupForm from "./components/user/SignupForm";
 import Talk from "./components/talk/Talk";
 import Mypage from "./components/user/Mypage";
 import CreateProduct from "./components/product/createProduct";
+import Product from "./components/product/Product";
 
 
 function App() {
@@ -28,7 +29,8 @@ function App() {
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/talk" element={<Talk />} />
             <Route path="/mypage" element={<Mypage />} />
-            <Route path="sell-product" element={<CreateProduct/>}/>
+            <Route path="/sell-product" element={<CreateProduct/>}/>
+            <Route path="/product" element={<Product/>}/>
           </Routes>
         </Layout>
       </AuthProvider>
