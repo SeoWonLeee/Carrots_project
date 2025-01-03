@@ -1,0 +1,111 @@
+.create-container {
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px 30px;
+    background-color: #fff;
+    border-radius: 10px; /* �κ렐 紐⑥꽌由� */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 遺��쒕윭�� 洹몃┝�� */
+  }
+  
+  .create-container h1 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-align: center; /* 媛��대뜲 �뺣젹 */
+    color: #333;
+  }
+  
+  .product-form .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .product-form label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #555; /* 遺��쒕윭�� �됱긽 */
+  }
+  
+  .product-form input,
+  .product-form select,
+  .product-form textarea {
+    box-sizing: border-box; /* �⑤뵫 �ы븿 �ш린 怨꾩궛 */
+  
+    width: 100%;
+    padding: 12px; /* �щ갚 利앷� */
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9; /* 諛곌꼍�� 異붽� */
+    transition: all 0.2s ease-in-out; /* �꾪솚 �④낵 */
+  }
+  
+  .product-form input:focus,
+  .product-form select:focus,
+  .product-form textarea:focus {
+    border-color: #ff5722; /* �ъ빱�� �� 媛뺤“ �됱긽 */
+    box-shadow: 0 0 5px rgba(255, 87, 34, 0.5); /* �ъ빱�� �④낵 */
+    outline: none;
+  }
+  
+  .product-form textarea {
+    resize: none;
+    height: 120px; /* �띿뒪�� �낅젰 諛뺤뒪 �믪씠 利앷� */
+  }
+  
+  .product-form .btn-submit {
+    background-color: #ff5722;
+    color: #fff;
+    padding: 15px;
+    font-size: 18px; /* 踰꾪듉 �띿뒪�� �ш린 利앷� */
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    text-align: center;
+  }
+  
+  .product-form .btn-submit:hover {
+    background-color: #e64a19; /* 踰꾪듉 �몃쾭 �됱긽 蹂�寃� */
+    transform: scale(1.05); /* �쎄컙 �뺣� */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* �몃쾭 �� 洹몃┝�� 異붽� */
+  }
+  
+  .product-form small {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #888; /* 遺��쒕윭�� 蹂댁“ �띿뒪�� �됱긽 */
+  }
+  
+  .image-preview {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    min-height: 150px;
+    text-align: center;
+    color: #888;
+  }
+  
+  .image-preview img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin: 5px;
+    border: 1px solid #ddd;
+  }
+  
+  .image-preview p {
+    font-size: 14px;
+    color: #aaa;
+  }

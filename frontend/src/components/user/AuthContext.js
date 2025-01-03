@@ -46,7 +46,6 @@ export const AuthProvider = ({ children }) => {
 
                 setIsAuthenticated(true);
                 setUserData(userData);
-
                 sessionStorage.setItem("userData", JSON.stringify(userData));
                 alert("로그인 성공");
                 navigate("/");

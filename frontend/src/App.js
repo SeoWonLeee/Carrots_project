@@ -7,24 +7,30 @@ import MainContent from "./components/content/MainContent";
 import LoginForm from "./components/user/LoginForm";
 import { AuthProvider } from "./components/user/AuthContext";
 import SignupForm from "./components/user/SignupForm";
+import Talk from "./components/talk/Talk";
+import Mypage from "./components/user/Mypage";
+import CreateProduct from "./components/product/createProduct";
 
 
 function App() {
   return (
     <Router>
-          <AuthProvider>
-      <Layout>
-        <Routes>
-        <Route path="/" element={
+      <AuthProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={
               <div>
-                <MainContent/>
+                <MainContent />
                 <ContentCategory />
               </div>
             } />
-          <Route path="/login" element={<LoginForm />} />
-          <Route path="/signup" element={<SignupForm />} />
-        </Routes>
-      </Layout>
+            <Route path="/login" element={<LoginForm />} />
+            <Route path="/signup" element={<SignupForm />} />
+            <Route path="/talk" element={<Talk />} />
+            <Route path="/mypage" element={<Mypage />} />
+            <Route path="sell-product" element={<CreateProduct/>}/>
+          </Routes>
+        </Layout>
       </AuthProvider>
     </Router>
   );
