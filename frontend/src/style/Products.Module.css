@@ -269,7 +269,11 @@
 
 .filter-region-container .filter-city {
     margin-top: -10px;
-    margin-left: -20px;
+    margin-left: 20px;
+}
+
+.filter-region-container .filter-village li{
+    margin-left: 40px;
 }
 
 .filter-result-container {
@@ -283,11 +287,13 @@
 
 .filter-region-container .filter-village {
     margin-bottom: 13px;
+    margin-left: 40px;
 }
 
 .filter-region-container .filter-village {
     margin-top: -20px;
     margin-left: -10px;
+    margin-left: 40px;
 }
 
 
@@ -325,6 +331,7 @@
 
 .filter-category-container li {
     margin-top: 5px;
+    margin-left: 40px;
 }
 
 .filter-category-container span {
@@ -341,6 +348,10 @@
 
 .filter-sort {
     border-top: 1px solid #eee;
+}
+
+.filter-sort li {
+    margin-left: 40px;
 }
 
 .filter-sort h3 {

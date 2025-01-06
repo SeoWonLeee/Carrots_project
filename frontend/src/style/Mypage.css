@@ -1,11 +1,12 @@
 #mypage {
     margin-top: 20px;
+    margin-bottom: 40px;
 }
 
 .mypage {
     margin: 0px 250px;
     width: 800px;
-    height: 700px;
+    height: auto;
     border: 1px solid #d0d0d0;
 }
 
@@ -20,7 +21,7 @@
 }
 
 .mypage-header span{
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     height: 50px;
     font-size: 18px;
     color: #e84502;
@@ -31,7 +32,7 @@
 .mypage .user-info-wrap {
     width: 100%;
     height: 200px;
-    border: 1px solid #eee;
+    border-bottom: 1px solid #eee;
 }
 
 .user-info-wrap .user-info-profile-img{
@@ -79,7 +80,7 @@
 }
 
 .user-info-wrap .user-info-profile .user-info-section1 .user-info-loginId{
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     position: absolute;
     bottom: 0;
     font-size: 20px;
@@ -104,10 +105,21 @@
 }
 
 .user-info-wrap .user-info-profile .user-info-section3 button{
+    font-family: 'PretendardVariable', sans-serif;
     width: 100%;
     height: 30px;
     border: none;
     border-radius: 5px;
+    background-color: #ff6f0f;
+    color: #fff;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.user-info-wrap .user-info-profile .user-info-section3 button:hover{
+    background-color: #da5c08;
 }
 
 
@@ -292,24 +304,12 @@
 
 .user-list-wrap li span{
     display: inline-block;
-    font-family: 'Paperlogy-4';
+    font-family: 'PretendardVariable', sans-serif;
     font-size: 15px;
 }
 
-.list-arrow {
-}
 
-.list-arrow::before {
-    content: '';
-    position: absolute;
-    right: 20px;
-    top: 43%;
-    width: 7px;
-    height: 7px;
-    border-top: 2px solid #000000;
-    border-right: 2px solid #000000;
-    transform: rotate(45deg);
-}
+
 
 
 
@@ -319,7 +319,7 @@
     margin-top: 10px;
     position: relative;
     text-align: right;
-    font-family: 'Arial', sans-serif;
+    font-family: 'PretendardVariable', sans-serif;
     color: #666;
 }
 
@@ -335,7 +335,7 @@
 }
 
 .basic-temperature {
-    font-family: 'Paperlogy-4';
+    font-family: 'PretendardVariable', sans-serif;
     position: absolute;
     font-size: 11px;
     left: 165px;
@@ -360,11 +360,12 @@
 
 .manner-header .manner-temperature{
     margin-top: -13px;
+    font-size: 15px;
 }
 
 .manner-emoji {
     margin-top: -15px;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 /* 매너 온도 바 */
@@ -384,6 +385,7 @@
     height: 100%;
     background-color: #ffa112;
     border-radius: 4px;
+    font-size: 12px;
     transition: width 0.3s ease-in-out; /* 부드러운 애니메이션 */
 }
 
@@ -395,3 +397,112 @@
 }
 
 /* 매너 온도 끝 */
+
+
+
+
+
+
+/* 리뷰 */
+.user-list-wrap {
+    width: 100%;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+
+
+.list-item {
+    display: flex;
+    text-align: left;
+}
+
+
+.list-item:hover {
+    background: #f1f1f1;
+}
+
+.list-arrow {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.list-arrow.open {
+    transform: rotate(-135deg);
+}
+
+.slide-content {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 10px;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.slide-content .slide-item {
+    transition: 0.3s;
+}
+.slide-content .slide-item:hover{
+    display: block;
+    background-color: rgb(233, 233, 233);
+}
+
+.slide-content.open {
+    max-height: 500px; /* 슬라이드의 최대 높이 설정 */
+    padding: 10px 10px;
+}
+
+
+
+.sell-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.sell-item-img img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+.sell-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sell-item-title {
+    font-size: 16px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.sell-item-price {
+    font-size: 14px;
+    color: #888;
+    margin: 5px 0;
+}
+
+.sell-item-views {
+    font-size: 12px;
+    color: #aaa;
+}

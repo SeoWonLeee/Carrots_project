@@ -297,13 +297,16 @@ function Talk() {
                                         <div className='talk-header'>
                                             <div className='recive-profile'>
                                                 {connected ? (
+                                                    <Link to={`/users/${currentChatRoom.userId}`}>
                                                     <div className='connection-profile'>
                                                         <img src={`http://127.0.0.1:8080/images/${currentChatRoom.partnerProfileImage}` || "/profile_default.png"} alt="Profile" />
                                                     </div>
+                                                    </Link>
                                                 ) : (
                                                     <div className='disconnection-profile'>
                                                         <img src={currentChatRoom.partnerProfileImage || "/profile_default.png"} alt="Profile" />
                                                     </div>
+                                                    
                                                 )}
                                             </div>
 
