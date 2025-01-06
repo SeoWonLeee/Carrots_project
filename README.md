@@ -33,9 +33,9 @@
 | --- | --- | --- | --- |
 |  |  | https://github.com/sha2170 |  |
 
-[Group6-Carrots](https://github.com/Group6-Carrots)
+팀 깃허브 :  [Group6-Carrots](https://github.com/Group6-Carrots)
 
-https://qweqwerty12321-1733977276703.atlassian.net/jira/software/projects/KAN/boards/1
+프로젝트 관리 지라 : https://qweqwerty12321-1733977276703.atlassian.net/jira/software/projects/KAN/boards/1
 
 ---
 
