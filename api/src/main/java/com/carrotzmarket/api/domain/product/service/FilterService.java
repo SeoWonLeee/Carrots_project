@@ -18,6 +18,7 @@ public class FilterService {
     private final ProductRepository productRepository;
     private final ProductImageService productImageService;
     private final ViewedProductService viewedProductService;
+    private final ProductService productService;
 
     public List<ProductEntity> filterProductsByCategory(Long categoryId) {
         return productRepository.findByCategoryId(categoryId);

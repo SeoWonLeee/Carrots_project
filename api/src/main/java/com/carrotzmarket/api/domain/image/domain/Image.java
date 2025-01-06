@@ -6,7 +6,7 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class Image {
-    public static final String DEFAULT_IMAGE = "default_image.jpg";
+    public static final String DEFAULT_IMAGE = "profile_default.png";
     private String originalFileName;
     private String storeFileName;
 }

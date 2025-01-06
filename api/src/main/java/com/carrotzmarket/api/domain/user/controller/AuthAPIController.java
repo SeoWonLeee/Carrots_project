@@ -27,7 +27,6 @@ public class AuthAPIController {
     @PostMapping("/login")
     public ResponseEntity<ResponseInterface> login(@RequestBody UserLoginRequest request, HttpServletRequest servlet) {
         ResponseInterface response = userLoginService.login(request);
-
         UserResponse findUser = (UserResponse) userLoginService.login(request);
         UserSession userSession = userConverter.toSession(findUser);
 
@@ -47,7 +46,8 @@ public class AuthAPIController {
     }
 
     private void createSession(UserSession userSession,HttpServletRequest request) {
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(true);
         session.setAttribute("userSession", userSession);
+        request.getSession().setAttribute("userSession", userSession);
     }
 }

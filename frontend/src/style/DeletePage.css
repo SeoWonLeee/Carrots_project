@@ -1,0 +1,36 @@
+/* DeletePage 스타일 */
+.delete-container {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.delete-container h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.delete-container p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.delete-container button {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #fff;
+  background-color: #ff6f00;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.delete-container button:hover {
+  background-color: #e55e00;
+}

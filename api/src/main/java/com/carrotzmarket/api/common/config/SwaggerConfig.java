@@ -20,20 +20,28 @@ public class SwaggerConfig {
                         .version("1.0.0"));
     }
 
-//    @Bean
-//    public GroupedOpenApi userApi() {
-//        return GroupedOpenApi.builder()
-//                .group("User API")
-//                .packagesToScan("com.carrotzmarket.api.domain.user.controller")
-//                .build();
-//    }
-//
-//    @Bean
-//    public GroupedOpenApi productApi() {
-//        return GroupedOpenApi.builder()
-//                .group("Product API")
-//                .packagesToScan("com.carrotzmarket.api.domain.product.controller")
-//                .build();
-//    }
+    @Bean
+    public GroupedOpenApi userApi() {
+        return GroupedOpenApi.builder()
+                .group("User API")
+                .packagesToScan("com.carrotzmarket.api.domain.user.controller")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi productApi() {
+        return GroupedOpenApi.builder()
+                .group("Product API")
+                .packagesToScan("com.carrotzmarket.api.domain.product.controller")
+                .build();
+    }
+
+    @Bean
+    public GroupedOpenApi chatAPI() {
+        return GroupedOpenApi.builder()
+                .group("Chat API")
+                .packagesToScan("com.carrotzmarket.api.domain.chat.controller")
+                .build();
+    }
 }
 

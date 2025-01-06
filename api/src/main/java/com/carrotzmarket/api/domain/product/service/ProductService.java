@@ -1,9 +1,11 @@
 package com.carrotzmarket.api.domain.product.service;
 
+import com.carrotzmarket.api.domain.Address.service.AddressService;
 import com.carrotzmarket.api.domain.category.dto.CategoryDto;
 import com.carrotzmarket.api.domain.category.repository.CategoryRepository;
 import com.carrotzmarket.api.domain.favoriteProduct.repository.FavoriteProductRepository;
 import com.carrotzmarket.api.domain.notification.service.NotificationService;
+import com.carrotzmarket.api.domain.image.domain.Image;
 import com.carrotzmarket.api.domain.product.dto.ProductCreateRequestDto;
 import com.carrotzmarket.api.domain.product.dto.ProductResponseDto;
 import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
@@ -17,6 +19,11 @@ import com.carrotzmarket.api.domain.user.dto.temp.SellerProfileDto;
 import com.carrotzmarket.api.domain.user.repository.UserRepository;
 import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.api.domain.viewedProduct.service.ViewedProductService;
+import com.carrotzmarket.db.address.Address;
+import com.carrotzmarket.db.address.City;
+import com.carrotzmarket.db.address.Province;
+import com.carrotzmarket.db.address.Town;
+import com.carrotzmarket.db.address.Village;
 import com.carrotzmarket.db.category.CategoryEntity;
 import com.carrotzmarket.db.favoriteProduct.FavoriteProductEntity;
 import com.carrotzmarket.db.product.ProductEntity;
@@ -50,44 +57,89 @@ public class ProductService {
     private final ProductTransactionRepository productTransactionRepository;
     private final UserMannerService userService;
     private final NotificationService notificationService;
+    private final AddressService addressService;
+
+
+
+    private final com.carrotzmarket.api.domain.image.service.ProductImageService productImageService2;
 
     public ProductEntity findProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
     }
 
-
     public ProductEntity createProduct(ProductCreateRequestDto request) {
         CategoryEntity category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with ID: " + request.getCategoryId()));
+
+
+        Province province = null;
+        if (request.getProvince() != null && !request.getProvince().isEmpty()) {
+            Optional<Province> province1 = addressService.findProvince(request.getProvince());
+            if (province1.isPresent()) province = province1.get();
+        }
+
+        City city = null;
+        if (request.getCity() != null && !request.getCity().isEmpty()) {
+            Optional<City> village1 = addressService.findCity(request.getCity());
+            if (village1.isPresent()) city = village1.get();
+        }
+
+        Town town = null;
+        if (request.getTown() != null && !request.getTown().isEmpty()) {
+            Optional<Town> village1 = addressService.findTown(request.getTown());
+            if (village1.isPresent()) town = village1.get();
+        }
+
+        Village village = null;
+        if (request.getVillage() != null && !request.getVillage().isEmpty()) {
+            Optional<Village> village1 = addressService.findVillage(request.getVillage());
+            if (village1.isPresent()) village = village1.get();
+        }
+
+        Address address = addressService.create(province, city, town, village);
 
         ProductEntity product = ProductEntity.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .userId(request.getUserId())
-                .regionId(request.getRegionId())
                 .category(category)
-                .status(request.getStatus())
+                .address(address)
+                .status(ProductStatus.ON_SALE)
                 .build();
 
         ProductEntity savedProduct = productRepository.save(product);
 
+        List<Image> images = productImageService2.uploadImages(request.getImages());
+
         if (request.getImages() != null && !request.getImages().isEmpty()) {
             List<ProductImageEntity> productImages = new ArrayList<>();
-            for (MultipartFile image : request.getImages()) {
-                try {
-                    String imageUrl = fileUploadService.uploadFile(image);
-                    ProductImageEntity productImage = new ProductImageEntity();
-                    productImage.setProductId(savedProduct.getId());
-                    productImage.setImageUrl(imageUrl);
-                    productImages.add(productImage);
-                } catch (IOException e) {
-                    throw new RuntimeException("Failed to upload image: " + image.getOriginalFilename(), e);
-                }
+            for (Image image : images) {
+                ProductImageEntity productImage = new ProductImageEntity();
+                productImage.setProductId(savedProduct.getId());
+                productImage.setImageUrl(image.getStoreFileName());
+                productImages.add(productImage);
             }
             productImageService.saveAll(productImages);
         }
+
+
+//        if (request.getImages() != null && !request.getImages().isEmpty()) {
+//            List<ProductImageEntity> productImages = new ArrayList<>();
+//            for (MultipartFile image : request.getImages()) {
+//                try {
+//                    String imageUrl = fileUploadService.uploadFile(image);
+//                    ProductImageEntity productImage = new ProductImageEntity();
+//                    productImage.setProductId(savedProduct.getId());
+//                    productImage.setImageUrl(imageUrl);
+//                    productImages.add(productImage);
+//                } catch (IOException e) {
+//                    throw new RuntimeException("Failed to upload image: " + image.getOriginalFilename(), e);
+//                }
+//            }
+//            productImageService.saveAll(productImages);
+//        }
 
         return savedProduct;
     }

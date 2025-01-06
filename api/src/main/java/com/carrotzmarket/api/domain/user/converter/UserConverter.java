@@ -52,6 +52,7 @@ public class UserConverter {
                 .profileImageUrl(userEntity.getProfileImageUrl())
                 .region(userEntity.getUserRegion())
                 .createdAt(userEntity.getCreatedAt())
+                .manner(userEntity.getMannerTemperature())
                 .failedLoginAttemptsCount(userEntity.getFailedLoginAttempts())
                 .status(status.name())
                 .message(message)
