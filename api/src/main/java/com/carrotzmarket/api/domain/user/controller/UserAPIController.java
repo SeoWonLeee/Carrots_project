@@ -52,6 +52,12 @@ public class UserAPIController {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping("/id/{id}")
+    public ResponseEntity<ResponseInterface> getUserInfoById(@PathVariable Long id) {
+        UserResponse response = (UserResponse) userManagementService.getUserInfoById(id);
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UserResponse> updateUser(
             @Login UserSession userSession,

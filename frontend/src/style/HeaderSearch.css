@@ -1,0 +1,229 @@
+#header-search {
+    display: flex;
+    height: 100px;
+    box-sizing: border-box;
+}
+
+.header-search {
+    margin-top: 10px;
+}
+
+.user-location {
+    margin-right: 20px;
+    float: left;
+    font-family: 'PretendardVariable', sans-serif;
+    font-weight: bold;
+    display: inline-flex;
+    height: 40px;
+    background-color: #eeeff1;
+    border-radius: 21px;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    white-space: nowrap;
+    width: auto;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.location-text {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    font-size: 15px;
+}
+
+.icon {
+    margin-left: 15px;
+    margin-right: 5px;
+}
+
+.dropdown-icon {
+    margin-left: 4px;
+    font-size: 12px;
+}
+
+.header-search-form {
+    display: flex;
+    align-items: center; /* 세로 정렬 */
+    flex-grow: 1; /* 남은 공간을 채움 */
+    height: 40px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    background-color: #ffffff;
+    padding: 0 10px; /* 좌우 패딩 추가 */
+    box-sizing: border-box; /* 패딩 포함 크기 계산 */
+}
+
+.product-category-select {
+    display: flex;
+    align-items: center;
+    margin-right: 10px; /* 검색 바와 간격 추가 */
+}
+
+.product-category-select select {
+    font-family: 'PretendardVariable', sans-serif;
+    border: none;
+    font-size: 13px;
+    font-weight: bold;
+    outline: none;
+    cursor: pointer;
+    color: #6d6d6d;
+}
+
+.prudct-search-bar {
+    display: flex;
+    align-items: center;
+    flex-grow: 1;
+    position: relative;
+}
+
+.prudct-search-bar input {
+    flex-grow: 1; /* 가로로 확장 */
+    font-family: 'PretendardVariable', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    border: none;
+    outline: none;
+    padding: 0 10px; /* 입력 필드 내부 여백 */
+}
+
+.prudct-search-bar button {
+    position: absolute;
+    right: 0px;
+    top: -6px;
+    height: 30px;
+    width: 30px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    background-color: #fff;
+    border-radius: 5px;
+}
+
+.prudct-search-bar button:hover {
+    background-color: #e6e6e6;
+}
+
+.split {
+    color: #d6d6d6;
+    margin-top: -1px;
+}
+
+
+.header-search-keyword {
+    margin-top: 1px; /* 검색 바와 간격 추가 */
+}
+
+.keyword-search-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap; /* 여러 줄로 나열 가능 */
+    margin-left: 155px;
+}
+
+.keyword-label {
+    font-size: 13px;
+    margin-right: -25px;
+}
+
+.keyword-list {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+.keyword-list li {
+    margin-right: 10px;
+    color: #797979;
+}
+
+.keyword-list li a {
+    color: #acacac;
+    font-size: 13px;
+    text-decoration: none;
+}
+
+.keyword-list li a:hover {
+    text-decoration: underline;
+}
+
+
+/* 작은 화면 (모바일) */
+@media (max-width: 768px) {
+    #header-search {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+    }
+
+    .user-location {
+        width: 100%;
+        justify-content: flex-start;
+        margin-bottom: 10px;
+    }
+
+    .header-search-form {
+        width: 100%;
+        margin-left: 0;
+        padding: 0 10px;
+    }
+
+    .product-category-select {
+        width: auto;
+        margin-right: 5px;
+    }
+
+    .prudct-search-bar input {
+        font-size: 12px;
+        padding: 0 5px;
+    }
+
+    .prudct-search-bar button {
+        top: 5px;
+        right: 5px;
+    }
+
+    .keyword-search-container {
+        flex-direction: column;
+        margin-left: 0;
+        align-items: flex-start;
+    }
+
+    .keyword-label {
+        margin-bottom: 5px;
+    }
+
+    .keyword-list {
+        font-size: 12px;
+        margin-left: 0;
+    }
+
+    .keyword-list li {
+        margin-right: 5px;
+    }
+}
+
+/* 중간 화면 (태블릿) */
+@media (max-width: 1024px) {
+    #header-search {
+        padding: 10px 15px;
+    }
+
+    .user-location {
+        max-width: 100px;
+    }
+
+    .header-search-form {
+        padding: 0 5px;
+    }
+
+    .prudct-search-bar input {
+        font-size: 13px;
+    }
+
+    .keyword-list {
+        font-size: 13px;
+    }
+}

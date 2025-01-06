@@ -2,6 +2,8 @@ package com.carrotzmarket.db.user;
 
 import static java.time.LocalDateTime.now;
 
+import com.carrotzmarket.db.chat.ChatRoomEntity;
+import com.carrotzmarket.db.chat.RoomUserEntity;
 import com.carrotzmarket.db.region.RegionEntity;
 import jakarta.persistence.*;
 import javax.swing.plaf.synth.Region;
@@ -54,6 +56,9 @@ public class UserEntity {
 
     @Column(name = "is_deleted")
     private boolean isDeleted;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoomUserEntity> roomUser;
 
     private LocalDateTime createdAt;
     private LocalDateTime lastLoginAt;

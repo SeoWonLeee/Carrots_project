@@ -6,30 +6,56 @@ import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
 import com.carrotzmarket.api.domain.product.repository.ProductRepository;
 import com.carrotzmarket.api.domain.product.service.FilterService;
 import com.carrotzmarket.api.domain.product.service.ProductService;
+import com.carrotzmarket.api.domain.productImage.service.ProductImageService;
+import com.carrotzmarket.api.domain.user.dto.response.UserSession;
 import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
+import com.carrotzmarket.db.productImage.ProductImageEntity;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/products")
+@Slf4j
 public class ProductController {
 
     private final ProductService productService;
     private final ProductRepository productRepository;
     private final UserMannerService userService;
     private final FilterService filterService;
+    private final ProductImageService imageService;
 
-    @PostMapping(consumes = "multipart/form-data")
-    public ResponseEntity<String> createProduct(@ModelAttribute @Valid ProductCreateRequestDto productCreateRequestDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> createProduct(@ModelAttribute ProductCreateRequestDto productCreateRequestDto, HttpServletRequest request) {
+
+        HttpSession session = request.getSession();
+        UserSession userSession = (UserSession) session.getAttribute("userSession");
+        log.info("유저 정보 : {}", userSession.getLoginId());
+        log.info("상품 정보 {}", productCreateRequestDto);
+
+        productCreateRequestDto.setUserId(userSession.getId());
+
         ProductEntity product = productService.createProduct(productCreateRequestDto);
         return ResponseEntity.ok("Product created with ID: " + product.getId());
     }
@@ -99,10 +125,19 @@ public class ProductController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ProductResponseDto>> getProductByUserId(@PathVariable Long userId) {
         List<ProductEntity> products = productService.getProductByUserId(userId);
+        List<ProductResponseDto> response = new ArrayList<>();
+        for (ProductEntity product : products) {
+            ProductResponseDto productResponseDto = new ProductResponseDto();
 
-        List<ProductResponseDto> response = products.stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
+            List<ProductImageEntity> images = imageService.getProductImageByProductId(product.getId());
+            String imageUrl = images.get(0).getImageUrl();
+            productResponseDto.setImage(imageUrl);
+            productResponseDto.setId(product.getId());
+            productResponseDto.setPrice(product.getPrice());
+            productResponseDto.setUserId(product.getUserId());
+            productResponseDto.setTitle(product.getTitle());
+            response.add(productResponseDto);
+        }
 
         return ResponseEntity.ok(response);
     }
@@ -158,9 +193,14 @@ public class ProductController {
             products = filterService.filterProductsByPriceRange(minPrice, maxPrice);
         }
 
-        List<ProductResponseDto> response = products.stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
+        List<ProductResponseDto> response = new ArrayList<>();
+        for (ProductEntity product : products) {
+            ProductResponseDto productById = productService.getProductById(product.getId());
+            ProductResponseDto dto = new ProductResponseDto(product);
+            dto.setImageUrls(productById.getImageUrls());
+            response.add(dto);
+        }
+
 
         return ResponseEntity.ok(response);
     }
