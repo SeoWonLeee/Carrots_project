@@ -68,7 +68,7 @@ public class NotificationService {
 
     public String markNotificationAsRead(Long notificationId) {
         NotificationEntity notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new IllegalArgumentException("Notification not found"));
+                .orElseThrow(() -> new IllegalArgumentException("알림을 찾을 수 없습니다."));
         notification.setRead(true);
         notificationRepository.save(notification);
         return "알림이 읽음 처리되었습니다.";
@@ -81,5 +81,22 @@ public class NotificationService {
         }
         notificationRepository.saveAll(notifications);
         return userId + "의 모든 알림이 읽음 처리되었습니다.";
+    }
+
+    public String getTargetUrlByNotificationId(Long notificationId) {
+        NotificationEntity notification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new IllegalArgumentException("알림을 찾을 수 없습니다."));
+        return notification.getTargetUrl();
+    }
+
+    public boolean isValidTargetUrl(String targetUrl) {
+        if (targetUrl == null || targetUrl.isBlank()) {
+            return false;
+        }
+        return targetUrl.startsWith("/products/") || targetUrl.startsWith("/chat/rooms/");
+    }
+
+    public NotificationEntity getNotificationById(Long notificationId) {
+        return notificationRepository.findById(notificationId).orElse(null);
     }
 }
