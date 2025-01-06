@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 const { kakao } = window;
 
-const KakaoMap = () => {
+const KakaoMap = ({ onSelectLocation }) => {
   const [map, setMap] = useState(null);
   const [marker, setMarker] = useState(null);
   const [locationInfo, setLocationInfo] = useState({
@@ -39,7 +39,7 @@ const KakaoMap = () => {
               region3,
             }
           });
-
+          onSelectLocation({ region1, region2, region3 }); // 선택된 지역 전달
           alert(`현재 위치의 지역: ${region1} > ${region2} > ${region3}`);
         }
       })
@@ -106,12 +106,12 @@ const KakaoMap = () => {
     >
       <div id="map" style={{ width: '99%', height: '500px' }}></div>
 
-      <div>
+      {/* <div>
         <h3>현재 위치 정보:</h3>
         <p>지역 1: {locationInfo.address.region1}</p>
         <p>지역 2: {locationInfo.address.region2}</p>
         <p>지역 3: {locationInfo.address.region3}</p>
-      </div>
+      </div> */}
     </div>
   );
 };

@@ -24,6 +24,7 @@ public class ProductResponseDto {
     private int favoriteCount;
     private int viewCount;
     private boolean isViewed;
+    private String image;
 
     // 기본 생성자
     public ProductResponseDto(ProductEntity product) {

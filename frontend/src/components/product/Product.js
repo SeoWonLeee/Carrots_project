@@ -8,6 +8,7 @@ const Product = () => {
     const [loading, setLoading] = useState(true);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [userData, setUserData] = useState(null);
+    const [userProducts, setUserProducts] = useState(null);
     const navigate = useNavigate();
 
     const handlePrev = () => {
@@ -23,7 +24,7 @@ const Product = () => {
         try {
             const formData = new FormData();
             formData.append('productId', productId);
-    
+
             const response = await fetch("http://localhost:8080/talk", {
                 method: "POST",
                 headers: {
@@ -31,7 +32,7 @@ const Product = () => {
                 credentials: "include",
                 body: formData,
             });
-    
+
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
@@ -53,8 +54,8 @@ const Product = () => {
                 });
                 const data = await response.json();
                 setProduct(data);
-                console.log("상품 정보 : ", data); 
-                setLoading(false); 
+                console.log("상품 정보 : ", data);
+                setLoading(false);
             } catch (error) {
                 console.error('Error fetching product:', error);
                 setLoading(false);
@@ -65,22 +66,22 @@ const Product = () => {
 
     useEffect(() => {
         if (!product) return;
-    
+
         async function fetchUsers() {
             try {
                 if (!product.userId) {
                     console.error("Product에 userId가 없습니다.");
                     return;
                 }
-    
+
                 const response = await fetch(`http://localhost:8080/api/users/id/${product.userId}`, {
                     method: "GET",
                 });
-    
+
                 if (response.ok) {
                     const data = await response.json();
                     console.log("유저 정보 :", data);
-                    setUserData(data); 
+                    setUserData(data);
                 } else {
                     console.error('유저 정보를 가져오는데 실패했습니다.');
                 }
@@ -88,8 +89,34 @@ const Product = () => {
                 console.error('유저 정보를 가져오는 중 오류:', error);
             }
         }
-    
+
+
+        async function fetchUserProducts() {
+            try {
+                if (!product.userId) {
+                    console.error("Product에 userId가 없습니다.");
+                    return;
+                }
+
+                const response = await fetch(`http://localhost:8080/products/user/${product.userId}`, {
+                    method: "GET",
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log("유저 다른 상품:", data);
+                    // 가져온 데이터를 활용하여 상태 업데이트
+                    setUserProducts(data);
+                } else {
+                    console.error(`유저 상품 정보를 가져오는데 실패했습니다. 상태 코드: ${response.status}`);
+                }
+            } catch (error) {
+                console.error("유저 상품 정보를 가져오는 중 오류 발생:", error);
+            }
+        }
+        fetchUserProducts();
         fetchUsers();
+
     }, [product]);
 
 
@@ -106,6 +133,12 @@ const Product = () => {
     if (!userData) {
         return <div>상품을 찾을 수 없습니다.</div>;
     }
+
+    
+    if (!userProducts) {
+        return <div>상품을 찾을 수 없습니다.</div>;
+    }
+
 
     return (
         <div className="product_content">
@@ -213,7 +246,7 @@ const Product = () => {
                     <div className="prodct-seller-items">
                         <div className="prodct-seller-items-header">
                             <div className="prodct-seller-items-header-tit">
-                                <span>최당근</span>
+                                <span>{userData.loginId}</span>
                                 <span>의 판매물품</span>
                             </div>
                             <div className="prodct-seller-items-more">
@@ -222,15 +255,14 @@ const Product = () => {
                         </div>
 
                         <div className="prodct-seller-items-list">
-                            {[1, 2, 3, 4, 5, 6].map((item) => (
-                                <div className="seller-item" key={item}>
-                                    <Link to={`/product/${item}`}>
+                            {userProducts.map((item) => (
+                                <div className="seller-item" key={item.id}>
+                                    <Link to={`/product/${item.id}`}>
                                         <div className="seller-item-img-container">
-                                            <img src="/img/banner1.png" alt="상품 이미지" />
+                                            <img src={item.image ? `http://localhost:8080/images/${item.image}` : '/img/banner1.png'} alt="상품 이미지" />
                                         </div>
-                                        <p className="seller-item-items-tit">상품 제목 {item}</p>
-                                        <p className="seller-item-items-price">30,000원</p>
-                                        <p className="seller-item-items-region">강남구</p>
+                                        <p className="seller-item-items-tit">{item.title}</p>
+                                        <p className="seller-item-items-price">{item.price.toLocaleString()}원</p>
                                     </Link>
                                 </div>
                             ))}
@@ -238,7 +270,7 @@ const Product = () => {
                     </div>
                 </div>
 
-                <div className="prodct-popular-items-container">
+                {/* <div className="prodct-popular-items-container">
                     <div className="prodct-popular-items">
                         <div className="prodct-seller-items-header">
                             <div className="prodct-seller-items-header-tit">
@@ -264,7 +296,7 @@ const Product = () => {
                             ))}
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     )

@@ -22,11 +22,11 @@ const HeaderSearch = () => {
         return localStorage.getItem('location') || '원미구';
     });
 
-    useEffect(()=> {
+    useEffect(() => {
         const newParams = new URLSearchParams(searchParams);
         newParams.set("region", localStorage.getItem("locationParam"));
         navigate(`/?${newParams.toString()}`);
-    },[])
+    }, [])
 
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
@@ -37,8 +37,8 @@ const HeaderSearch = () => {
         const addressParts = location.split(" ");
         const locationObject = {
             province: addressParts[0] || null,
-            city: addressParts[1] || null, 
-            town: addressParts[2] || null, 
+            city: addressParts[1] || null,
+            town: addressParts[2] || null,
             village: addressParts[3] || null,
         };
 
@@ -73,24 +73,16 @@ const HeaderSearch = () => {
     };
 
     useEffect(() => {
-        console.log("지역 정보", selectedLocation);
         const addressParts = selectedLocation.split(" ");
-
         setLocationObject({
             province: addressParts[0],
             city: addressParts[1],
             town: addressParts[2],
             village: addressParts[3],
         });
-
-        console.log("분리된 객체", locationObject);
-
     }, [selectedLocation])
 
 
-    useEffect(() => {
-        console.log("분리된 객체", locationObject);
-    }, [locationObject])
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
@@ -119,10 +111,10 @@ const HeaderSearch = () => {
 
     function getLocationFromLocalStorage() {
         const savedLocation = localStorage.getItem('location');
-        
+
         if (savedLocation) {
             const locationObject = JSON.parse(savedLocation);
-            
+
             if (locationObject.village) {
                 return `${locationObject.town} ${locationObject.village}`;
             }
@@ -138,11 +130,14 @@ const HeaderSearch = () => {
     }
 
     useEffect(() => {
-        // URL 파라미터에 저장된 검색어로 상태 초기화
+
+        if (location.pathname === '/maps') { // /maps 경로에서는 navigate 실행 안 함
+            navigate("/maps");
+        }
+
         const initialQuery = searchParams.get("query") || '';
         setSearchQuery(initialQuery);
 
-        // URL 파라미터에 저장된 지역으로 상태 초기화
         const initialLocation = searchParams.get("location") || getLocationFromLocalStorage();
         setSelectedLocation(initialLocation);
 

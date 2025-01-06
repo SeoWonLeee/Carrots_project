@@ -34,7 +34,7 @@ function App() {
             <Route path="/sell-product" element={<CreateProduct/>}/>
             <Route path="/product/:productId" element={<Product/>}/>
             <Route path="/buy-sell" element={<Products/>}/>
-            <Route path="/map" element={<Map/>}/>
+            <Route path="/maps" element={<Map/>}/>
           </Routes>
         </Layout>
       </AuthProvider>

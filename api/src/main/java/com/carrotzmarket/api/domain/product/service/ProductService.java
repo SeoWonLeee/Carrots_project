@@ -102,7 +102,6 @@ public class ProductService {
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .userId(request.getUserId())
-                .regionId(request.getRegionId())
                 .category(category)
                 .address(address)
                 .status(ProductStatus.ON_SALE)

@@ -34,7 +34,7 @@ public class ProductCreateRequestDto {
 
     private Long userId;
 
-    private Long regionId;
+//    private Long regionId;
 
     private Long categoryId;
 

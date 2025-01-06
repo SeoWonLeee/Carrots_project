@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import KakaoMap from "../KakaoMap"; // 카카오맵 컴포넌트를 임포트
 import "../../style/createProduct.css";
 
 const CreateProduct = () => {
@@ -8,8 +9,10 @@ const CreateProduct = () => {
         description: "",
         price: "",
         regionId: "",
-        images: []  // 이미지 상태를 product 객체 안으로 이동
+        images: [] // 이미지 상태를 product 객체 안으로 이동
     });
+
+    const [isMapOpen, setIsMapOpen] = useState(false); // 지도 모달 상태 관리
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -26,37 +29,65 @@ const CreateProduct = () => {
         } else {
             setProduct((prev) => ({
                 ...prev,
-                images: files,  // images 상태를 product.images로 수정
+                images: files,
             }));
         }
     };
 
+    const handleMapSelect = (region) => {
+        // 카카오맵에서 선택된 지역 저장
+        setProduct((prev) => ({
+            ...prev,
+            regionId: `${region.region1} ${region.region2} ${region.region3}`,
+        }));
+        setIsMapOpen(false); // 지도 모달 닫기
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
+
         const formData = new FormData();
-    
+
         // product 객체의 데이터를 formData에 추가
         Object.entries(product).forEach(([key, value]) => {
-            if (key !== "images") { // images는 제외하고 추가
+            if (key !== "images") {
                 formData.append(key, value);
             }
         });
-    
+
         // 이미지 파일들을 formData에 추가
         Array.from(product.images).forEach((image) => {
-            formData.append("images", image); // images로 여러 파일을 첨부
+            formData.append("images", image);
         });
-    
+
+
+        const [province, city, town, village] = product.regionId.split(" ");
+
+        const locationData = {
+            province,
+            city,
+            town,
+            village,
+        };
+
+        formData.append("province", locationData.province);
+        formData.append("city", locationData.city);
+        formData.append("town", locationData.town);
+        formData.append("village", locationData.village);
+
+
+
+        console.log("ddddddd",locationData);
+
         try {
             const response = await fetch("http://localhost:8080/products", {
                 method: "POST",
                 body: formData,
                 credentials: "include",
             });
-    
+
             if (response.ok) {
-                const data = await response.text(); // ResponseEntity의 메시지 읽기
+                const data = await response.text();
                 alert("상품 등록 성공: " + data);
                 console.log("서버 응답:", data);
             } else {
@@ -65,18 +96,15 @@ const CreateProduct = () => {
         } catch (error) {
             console.error("오류 발생:", error);
         }
-    
-        console.log("상품 등록:", product);
+
+        navigator('/');
     };
 
     return (
         <div className="create-container">
             <div className="login-logo" style={{ marginLeft: "150px" }}>
                 <a href="/main">
-                    <img
-                        src="/images/logo.svg"
-                        alt="당근마켓 로고"
-                    />
+                    <img src="/images/logo.svg" alt="당근마켓 로고" />
                 </a>
             </div>
             <form className="product-form" onSubmit={handleSubmit}>
@@ -175,19 +203,33 @@ const CreateProduct = () => {
                     <small>가격은 숫자로 입력해주세요. (예: 10000)</small>
                 </div>
 
-                {/* 상품 위치 */}
+                {/* 거래 위치 */}
                 <div className="form-group">
-                    <label htmlFor="product-location">거래 위치</label>
+                
+                    <label>거래 위치</label>
                     <input
-                        type="text"
-                        id="product-location"
-                        name="regionId"
-                        placeholder="거래 위치를 입력하세요"
-                        value={product.regionId}
-                        onChange={handleChange}
-                        required
+                        type="inpu"
+                        id="product-price"
+                        name="거래장소"
+                        placeholder="거래 장소"
+                        value={product.regionId || "선택된 위치가 없습니다."}
+                        disabled
                     />
                 </div>
+
+                {/* 지도 모달 */}
+                {true && (
+                    <div className="map-modal">
+                        <KakaoMap onSelectLocation={handleMapSelect} />
+                        {/* <button
+                            type="button"
+                            className="btn-close-map"
+                            onClick={() => setIsMapOpen(false)}
+                        >
+                            닫기
+                        </button> */}
+                    </div>
+                )}
 
                 {/* 제출 버튼 */}
                 <div className="form-group">

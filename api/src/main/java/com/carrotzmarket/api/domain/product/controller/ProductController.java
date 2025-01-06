@@ -6,10 +6,12 @@ import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
 import com.carrotzmarket.api.domain.product.repository.ProductRepository;
 import com.carrotzmarket.api.domain.product.service.FilterService;
 import com.carrotzmarket.api.domain.product.service.ProductService;
+import com.carrotzmarket.api.domain.productImage.service.ProductImageService;
 import com.carrotzmarket.api.domain.user.dto.response.UserSession;
 import com.carrotzmarket.api.domain.user.service.UserMannerService;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
+import com.carrotzmarket.db.productImage.ProductImageEntity;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -42,6 +44,7 @@ public class ProductController {
     private final ProductRepository productRepository;
     private final UserMannerService userService;
     private final FilterService filterService;
+    private final ProductImageService imageService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> createProduct(@ModelAttribute ProductCreateRequestDto productCreateRequestDto, HttpServletRequest request) {
@@ -49,6 +52,7 @@ public class ProductController {
         HttpSession session = request.getSession();
         UserSession userSession = (UserSession) session.getAttribute("userSession");
         log.info("유저 정보 : {}", userSession.getLoginId());
+        log.info("상품 정보 {}", productCreateRequestDto);
 
         productCreateRequestDto.setUserId(userSession.getId());
 
@@ -121,10 +125,19 @@ public class ProductController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<ProductResponseDto>> getProductByUserId(@PathVariable Long userId) {
         List<ProductEntity> products = productService.getProductByUserId(userId);
+        List<ProductResponseDto> response = new ArrayList<>();
+        for (ProductEntity product : products) {
+            ProductResponseDto productResponseDto = new ProductResponseDto();
 
-        List<ProductResponseDto> response = products.stream()
-                .map(ProductResponseDto::new)
-                .collect(Collectors.toList());
+            List<ProductImageEntity> images = imageService.getProductImageByProductId(product.getId());
+            String imageUrl = images.get(0).getImageUrl();
+            productResponseDto.setImage(imageUrl);
+            productResponseDto.setId(product.getId());
+            productResponseDto.setPrice(product.getPrice());
+            productResponseDto.setUserId(product.getUserId());
+            productResponseDto.setTitle(product.getTitle());
+            response.add(productResponseDto);
+        }
 
         return ResponseEntity.ok(response);
     }

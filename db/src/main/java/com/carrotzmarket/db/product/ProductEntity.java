@@ -31,7 +31,7 @@ public class ProductEntity {
     @Column(name = "user_id", unique = false, nullable = true)
     private Long userId;
 
-    @Column(name = "region_id", nullable = false)
+    @Column(name = "region_id", nullable = true)
     private Long regionId;
 
     @Column(length = 100, nullable = false)
