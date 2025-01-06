@@ -45,7 +45,7 @@
 }
 
 .header-nav .header-category li {
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     display: inline-block;
     margin-right: 30px;
     font-size: 16px;
@@ -71,7 +71,7 @@
 /* 헤더 유저 시작 */
 
 .header-nav .header-user-nav .header-user-login-btn {
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     width: 87px;
     height: 32px;
     text-align: center;
@@ -85,7 +85,7 @@
 }
 
 .header-nav .header-user-nav .header-user-signup-btn {
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     width: 87px;
     height: 32px;
     text-align: center;
@@ -99,7 +99,7 @@
 }
 
 .header-nav .header-user-nav .header-user-mypage-btn {
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     width: 87px;
     height: 32px;
     text-align: center;
@@ -113,7 +113,7 @@
 }
 
 .header-nav .header-user-nav .header-user-logout-btn {
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     width: 87px;
     height: 32px;
     text-align: center;
@@ -189,7 +189,7 @@
 .header-nav .header-user-nav span {
     position: relative;
     display: inline-block;
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     text-align: center;
     line-height: 32px;
     color: #e84500;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import "../../style/Products.Module.css";
+import "../../style/Products.css";
 import { Link, useSearchParams } from "react-router-dom";
 
 const Products = () => {

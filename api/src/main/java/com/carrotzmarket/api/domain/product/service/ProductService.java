@@ -96,7 +96,6 @@ public class ProductService {
         }
 
         Address address = addressService.create(province, city, town, village);
-
         ProductEntity product = ProductEntity.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())

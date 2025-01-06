@@ -232,9 +232,9 @@ const Product = () => {
                                         <span className="manner-temperature">{userData.manner}°C</span>
                                         <span className="manner-emoji">😊</span>
                                     </div>
-                                    <div className="manner-bar">
+                                    {/* <div className="manner-bar">
                                         <div className="manner-bar-filled"></div>
-                                    </div>
+                                    </div> */}
                                     <div className="manner-label">매너온도</div>
                                 </div>
                             </div>

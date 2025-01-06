@@ -43,12 +43,12 @@
 }
 
 .footer .footer-category ul p {
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     font-size: 16px;
 }
 
 .footer .footer-category li {
-    font-family: 'Paperlogy-3';
+    font-family: 'PretendardVariable', sans-serif;
     font-size: 14px;
     margin-top: 8px;
 }
@@ -59,7 +59,7 @@
 
 .footer-info {
     text-align: center;
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     color: #979797;
 }
 
@@ -70,7 +70,7 @@
 }
 
 .footer-info .footer-links a {
-    font-family: 'Paperlogy-4';
+    font-family: 'PretendardVariable', sans-serif;
     display: inline-block;
     margin-right: 10px;
     color: #979797;
@@ -88,7 +88,7 @@
 }
 
 .footer .footer-banner-content h1{
-    font-family: 'Paperlogy-7';
+    font-family: 'PretendardVariable', sans-serif;
     font-weight: bold;
     margin-top: 100px;
     font-weight: bold;
@@ -97,7 +97,7 @@
 }
 
 .footer .footer-banner-content h2{
-    font-family: 'Paperlogy-7';
+    font-family: 'PretendardVariable', sans-serif;
     font-weight: bold;
     margin-top: 100px;
     font-weight: bold;
