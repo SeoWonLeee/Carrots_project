@@ -39,7 +39,7 @@ const Header = () => {
 
                         <div className="header-category">
                             <ul>
-                                <li><Link to='/'>중고거래</Link></li>
+                                <li><Link to='/buy-sell'>중고거래</Link></li>
                                 <li><Link to='/'>부동산</Link></li>
                                 <li><Link to='/'>알바</Link></li>
                                 <li><Link to='/'>동네업체</Link></li>

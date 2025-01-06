@@ -11,7 +11,8 @@
 .user-location {
     margin-right: 20px;
     float: left;
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
+    font-weight: bold;
     display: inline-flex;
     height: 40px;
     background-color: #eeeff1;
@@ -20,8 +21,7 @@
     align-items: center;
     border: none;
     white-space: nowrap;
-    min-width: 80px;
-    max-width: 130px;
+    width: auto;
     overflow: hidden;
     box-sizing: border-box;
 }
@@ -62,7 +62,7 @@
 }
 
 .product-category-select select {
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     border: none;
     font-size: 13px;
     font-weight: bold;
@@ -80,7 +80,7 @@
 
 .prudct-search-bar input {
     flex-grow: 1; /* 가로로 확장 */
-    font-family: 'Paperlogy-5';
+    font-family: 'PretendardVariable', sans-serif;
     font-size: 13px;
     font-weight: bold;
     border: none;

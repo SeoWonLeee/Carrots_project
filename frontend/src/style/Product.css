@@ -68,8 +68,9 @@
 .slider-track {
     display: flex;
     transition: transform 0.4s ease-in-out;
+    /* 부드러운 애니메이션 */
     will-change: transform;
-    transform: translateX(-${currentIndex * 100}%); /* currentIndex에 맞춰 이미지 이동 */
+    /* 렌더링 성능 최적화 */
 }
 
 .slide-image {
@@ -354,6 +355,10 @@
     font-size: 23px;
 }
 
+.prodct-seller-items-header-tit h1{
+    font-family: 'Paperlogy-3Light';
+    font-size: 23px;
+}
 
 .prodct-seller-items-list {
     margin-top: 20px;

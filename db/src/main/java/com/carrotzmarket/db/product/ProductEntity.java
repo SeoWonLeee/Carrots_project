@@ -1,10 +1,13 @@
 package com.carrotzmarket.db.product;
 
+import com.carrotzmarket.db.address.Address;
 import com.carrotzmarket.db.category.CategoryEntity;
 import com.carrotzmarket.db.chat.ChatRoomEntity;
+import com.carrotzmarket.db.productImage.ProductImageEntity;
 import com.carrotzmarket.db.transaction.ProductTransactionEntity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -63,6 +66,11 @@ public class ProductEntity {
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductTransactionEntity transaction;
+
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
+
 
 
     @PrePersist

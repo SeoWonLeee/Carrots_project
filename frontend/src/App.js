@@ -7,9 +7,11 @@ import LoginForm from "./components/user/LoginForm";
 import { AuthProvider } from "./components/user/AuthContext";
 import SignupForm from "./components/user/SignupForm";
 import Talk from "./components/talk/Talk";
-import Mypage from "./components/user/Mypage";
+import Mypagee from "./components/user/MyPagee";
 import CreateProduct from "./components/product/createProduct";
 import Product from "./components/product/Product";
+import Products from "./components/product/Products";
+import Map from "./components/KakaoMap";
 
 
 function App() {
@@ -28,9 +30,11 @@ function App() {
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/talk" element={<Talk />} />
             <Route path="/talk/:roomId" element={<Talk />} />
-            <Route path="/mypage" element={<Mypage />} />
+            <Route path="/mypage" element={<Mypagee />} />
             <Route path="/sell-product" element={<CreateProduct/>}/>
             <Route path="/product/:productId" element={<Product/>}/>
+            <Route path="/buy-sell" element={<Products/>}/>
+            <Route path="/map" element={<Map/>}/>
           </Routes>
         </Layout>
       </AuthProvider>

@@ -1,35 +1,159 @@
-import { React, useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import "../../style/HeaderSearch.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faLocationDot, faChevronDown, faSearch } from "@fortawesome/free-solid-svg-icons";
 import Modal from './LocationSelector';
 
 const HeaderSearch = () => {
+    // 상태 관리
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [searchParams, setSearchParams] = useSearchParams();
+    const [locationObject, setLocationObject] = useState('원미구');
+    const [locationparm, setLocationparm] = useState(null);
+
+    const location = useLocation();
+    const navigate = useNavigate();
+
+
+
     const [selectedLocation, setSelectedLocation] = useState(() => {
-        return localStorage.getItem('selectedLocation') || '원미구';
+        return localStorage.getItem('location') || '원미구';
     });
+
+    useEffect(()=> {
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("region", localStorage.getItem("locationParam"));
+        navigate(`/?${newParams.toString()}`);
+    },[])
+
     const openModal = () => setIsModalOpen(true);
     const closeModal = () => setIsModalOpen(false);
 
     const handleLocationSelect = (location) => {
+        localStorage.clear();
+
+        const addressParts = location.split(" ");
+        const locationObject = {
+            province: addressParts[0] || null,
+            city: addressParts[1] || null, 
+            town: addressParts[2] || null, 
+            village: addressParts[3] || null,
+        };
+
+        console.log("선택된 지역 = ", location);
+        console.log("2222선택된 지역 = ", locationObject);
+
+
+        if (locationObject.village) {
+            location = `${locationObject.town} ${locationObject.village}`;
+        }
+        else if (locationObject.town) {
+            location = `${locationObject.city} ${locationObject.town}`;
+        }
+        else if (locationObject.city) {
+            location = `${locationObject.province} ${locationObject.city}`;
+        }
+        else {
+            location = `${locationObject.province}`;
+        }
+
+        setLocationparm(location);
+
+        localStorage.setItem('location', JSON.stringify(locationObject));
+        localStorage.setItem('locationParam', location);
+
         setSelectedLocation(location);
-        localStorage.setItem('selectedLocation', location);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("region", location);
+        setSearchParams(newParams);
+
         closeModal();
     };
 
+    useEffect(() => {
+        console.log("지역 정보", selectedLocation);
+        const addressParts = selectedLocation.split(" ");
+
+        setLocationObject({
+            province: addressParts[0],
+            city: addressParts[1],
+            town: addressParts[2],
+            village: addressParts[3],
+        });
+
+        console.log("분리된 객체", locationObject);
+
+    }, [selectedLocation])
+
+
+    useEffect(() => {
+        console.log("분리된 객체", locationObject);
+    }, [locationObject])
+
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        console.log('Search Query:', searchQuery);
+
+        const trimmedQuery = searchQuery.trim();
+
+        if (location.pathname.startsWith("/buy-sell")) {
+            const newParams = new URLSearchParams(searchParams);
+            if (trimmedQuery) {
+                newParams.set("search", trimmedQuery);
+                newParams.set("region", searchParams.get("region"));
+            } else {
+                newParams.delete("query");
+            }
+            setSearchParams(newParams);
+        } else {
+            const newParams = new URLSearchParams();
+            if (trimmedQuery) {
+                newParams.set("search", trimmedQuery);
+                newParams.set("region", localStorage.getItem("locationParam"));
+
+            }
+            navigate(`/buy-sell/?${newParams.toString()}`);
+        }
     };
+
+    function getLocationFromLocalStorage() {
+        const savedLocation = localStorage.getItem('location');
+        
+        if (savedLocation) {
+            const locationObject = JSON.parse(savedLocation);
+            
+            if (locationObject.village) {
+                return `${locationObject.town} ${locationObject.village}`;
+            }
+            else if (locationObject.town) {
+                return `${locationObject.city} ${locationObject.town}`;
+            }
+            else {
+                return `${locationObject.province} ${locationObject.city}`;
+            }
+        } else {
+            return '지역 정보 없음';
+        }
+    }
+
+    useEffect(() => {
+        // URL 파라미터에 저장된 검색어로 상태 초기화
+        const initialQuery = searchParams.get("query") || '';
+        setSearchQuery(initialQuery);
+
+        // URL 파라미터에 저장된 지역으로 상태 초기화
+        const initialLocation = searchParams.get("location") || getLocationFromLocalStorage();
+        setSelectedLocation(initialLocation);
+
+    }, [searchParams]);
 
     return (
         <div id="header-search">
             <div className="container">
                 <div className="header-search">
 
-
+                    {/* 지역 선택 버튼 */}
                     <div className="user-location">
                         <button type="button" onClick={openModal} className="user-location">
                             <div className="location-text">
@@ -41,11 +165,12 @@ const HeaderSearch = () => {
                         {isModalOpen && (
                             <Modal
                                 onClose={closeModal}
-                                onSelectLocation={handleLocationSelect}
+                                onSelectLocation={handleLocationSelect} // 지역 선택시 호출되는 함수
                             />
                         )}
                     </div>
 
+                    {/* 검색 폼 */}
                     <form className="header-search-form" onSubmit={handleSearchSubmit}>
                         <div className="product-category-select">
                             <select className="product-category-dropdown" name="category" aria-label="카테고리 선택" defaultValue="중고거래">
@@ -74,7 +199,6 @@ const HeaderSearch = () => {
                         </div>
                     </form>
 
-
                     <div className="header-search-keyword">
                         <div className="keyword-search-container">
                             <span className="keyword-label">인기 검색어</span>
@@ -94,12 +218,9 @@ const HeaderSearch = () => {
                     </div>
 
                 </div>
-
-
-
             </div>
         </div>
-    )
+    );
 };
 
 export default HeaderSearch;

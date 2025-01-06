@@ -1,5 +1,6 @@
 package com.carrotzmarket.api.domain.product.dto;
 
+import com.carrotzmarket.api.domain.Address.Address;
 import com.carrotzmarket.db.product.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
@@ -40,4 +41,9 @@ public class ProductCreateRequestDto {
     private ProductStatus status;
 
     private List<MultipartFile> images;
+
+    private String province;
+    private String city;
+    private String town;
+    private String village;
 }

@@ -21,7 +21,7 @@ const Footer = () => {
 
                     <div className="footer-nav">
                         <div className="footer-logo">
-                            <img src="images/logo.svg" />
+                            <img src="/images/logo.svg" />
                         </div>
 
                         <div className="footer-category">
