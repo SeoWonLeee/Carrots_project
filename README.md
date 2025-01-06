@@ -87,7 +87,7 @@ https://qweqwerty12321-1733977276703.atlassian.net/jira/software/projects/KAN/bo
 
 ### 기술 스택
 
-- **언어** : `Java`
+- 언어 : `Java`
 - **백엔드** : `Spring Boot`  `Spring Data JPA`  `Spring Security`
 - **빌드 도구** : `Gradle`
 - **데이터베이스** : `MySQL`
