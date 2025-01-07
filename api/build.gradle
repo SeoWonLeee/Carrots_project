@@ -59,7 +59,7 @@ dependencies {
     testImplementation 'com.icegreen:greenmail:1.6.10'
 
     // SSE EventBus
-    implementation files('/Users/iseowon/Downloads/Carrots/libs/sse-eventbus-2.0.2-SNAPSHOT.jar')
+    implementation files("$rootDir/libs/sse-eventbus-2.0.2-SNAPSHOT.jar")
 
     implementation 'org.reactivestreams:reactive-streams:1.0.3'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
@@ -70,6 +70,9 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // SecurityContextHolder
+    implementation 'org.springframework.boot:spring-boot-starter-security'
 
 }
 
