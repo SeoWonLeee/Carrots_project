@@ -7,17 +7,21 @@ import LoginForm from "./components/user/LoginForm";
 import { AuthProvider } from "./components/user/AuthContext";
 import SignupForm from "./components/user/SignupForm";
 import Talk from "./components/talk/Talk";
-import Mypagee from "./components/user/MyPagee";
+import Mypage from "./components/user/Mypage";
 import CreateProduct from "./components/product/createProduct";
 import Product from "./components/product/Product";
 import Products from "./components/product/Products";
 import Map from "./components/KakaoMap";
+import UserPage from "./components/user/UserPage";
+import UserEditPage from "./components/user/UserEditPage";
+import ScrollToTop from "./components/etc/ScrollToTop";
 
 
 function App() {
   return (
     <Router>
       <AuthProvider>
+      <ScrollToTop />
         <Layout>
           <Routes>
             <Route path="/" element={
@@ -30,11 +34,13 @@ function App() {
             <Route path="/signup" element={<SignupForm />} />
             <Route path="/talk" element={<Talk />} />
             <Route path="/talk/:roomId" element={<Talk />} />
-            <Route path="/mypage" element={<Mypagee />} />
+            <Route path="/mypage" element={<Mypage />} />
             <Route path="/sell-product" element={<CreateProduct/>}/>
             <Route path="/product/:productId" element={<Product/>}/>
             <Route path="/buy-sell" element={<Products/>}/>
             <Route path="/maps" element={<Map/>}/>
+            <Route path="/users/:userId" element={<UserPage/>}/>
+            <Route path="/users/edit" element={<UserEditPage/>}/>
           </Routes>
         </Layout>
       </AuthProvider>

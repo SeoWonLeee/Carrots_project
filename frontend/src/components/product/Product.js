@@ -215,16 +215,16 @@ const Product = () => {
                                 <button onClick={() => createChat()}>당근하기</button>
                             </div>
                         </div>
+                        
 
+                        <Link to={`/users/${userData.id}`}>
                         <div className="product_detail_seller">
                             <div className="product_detail_seller_profile_image">
-                                <Link to="/seller/1">
                                     <img src={`http://localhost:8080/images/${userData.profileImageUrl}`} alt="Seller Profile" />
-                                </Link>
                             </div>
                             <div className="product_detail_seller_info">
-                                <Link to="/seller/1" className="seller-id">{userData.loginId}</Link>
-                                <Link to="/region/gangnam" className="seller-region">{userData.region}</Link>
+                                <Link to={`/users/${userData.id}`}>{userData.loginId}</Link>
+                                <Link to={`/users/${userData.id}`} className="seller-region">{userData.region}</Link>
                             </div>
                             <div className="product_detail_seller_manner">
                                 <div className="manner-container">
@@ -232,13 +232,14 @@ const Product = () => {
                                         <span className="manner-temperature">{userData.manner}°C</span>
                                         <span className="manner-emoji">😊</span>
                                     </div>
-                                    <div className="manner-bar">
+                                    {/* <div className="manner-bar">
                                         <div className="manner-bar-filled"></div>
-                                    </div>
+                                    </div> */}
                                     <div className="manner-label">매너온도</div>
                                 </div>
                             </div>
                         </div>
+                        </Link>
                     </div>
                 </div>
 

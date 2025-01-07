@@ -1,0 +1,510 @@
+@import url('https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap');
+
+#items {
+    font-family: 'PretendardVariable', sans-serif;
+}
+
+
+.items-header {
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.items-header a {
+    font-size: 13px;
+    font-weight: bold;
+    color: #676767;
+    margin-right: 2px;
+}
+
+.items-header a:hover {
+    text-decoration: underline;
+}
+
+.items-header p {
+    margin-left: 3px;
+}
+
+.items-header .items-category {
+    font-family: 'PretendardVariable', sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    margin-left: 8px;
+}
+
+.items-header p {
+    font-size: 14px;
+    display: inline-block;
+    color: #676767;
+}
+
+.items-header h1 {
+    font-family: 'PretendardVariable', sans-serif;
+    font-weight: bold;
+    font-size: 25px;
+    margin-top: -5px;
+    margin-left: -4px;
+    display: inline-block;
+    font-weight: bold;
+    margin-right: 7px;
+}
+
+.items-container {
+    float: left;
+    overflow: hidden;
+}
+
+
+/* 상품 스타일 */
+.items {
+    margin-top: 20px;
+    float: left;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    flex: 1;
+}
+
+.items .item {
+    width: 190px;
+    padding: 15px;
+    border-radius: 5px;
+    margin-right: 15px;
+}
+
+.items .item .item-title {
+    font-family: 'PretendardVariable', sans-serif;
+    font-size: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: 0.3px;
+}
+
+.items .item a {
+    width: 220px;
+    height: 220px;
+    overflow: hidden;
+}
+
+.item a:hover img {
+    transform: scale(1.05);
+    object-position: 50% 20%;
+}
+
+.item img {
+    width: inherit;
+    height: inherit;
+    border: 1px solid #e5e5e5;
+    border-radius: 10px;
+    object-fit: cover;
+    margin-bottom: 10px;
+    transition: object-position 0.3s ease, transform 0.3s ease;
+    object-position: center;
+}
+
+
+.items-item-price p {
+    font-family: 'PretendardVariable', sans-serif;
+    margin-top: -100px;
+    display: inline-block;
+    letter-spacing: 0.3px;
+    font-size: 15px;
+}
+
+.items .items-item-price p:nth-child(2) {
+    font-family: 'PretendardVariable', sans-serif;
+    margin-left: 0px;
+    font-weight: bold;
+}
+
+.items p:nth-child(4) {
+    color: #8d8d8d;
+    font-size: 13px;
+    margin-top: -10px;
+}
+
+
+.item .item-price {
+    font-weight: bold;
+}
+
+.item p:nth-child(2) {
+    margin-top: -5px;
+    font-size: 16px;
+    color: #000;
+}
+
+/*상품 필터*/
+
+.items-filter {
+    font-family: 'PretendardVariable', sans-serif;
+    display: flex;
+    flex-direction: column;
+    width: 230px;
+    height: auto;
+    background-color: #fff;
+}
+
+.filter-container {
+    height: 30px;
+}
+
+.filter-filter {}
+
+.filter-init {
+    float: right;
+    width: 50px;
+    margin-top: -35px;
+    margin-right: 5px;
+    background: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    color: #676767;
+    text-decoration: underline;
+}
+
+.items-filter {
+    display: flex;
+    flex-direction: column;
+    /* 세로 정렬 */
+    width: 230px;
+    height: auto;
+    background-color: #fff;
+}
+
+
+.items-filter h3 {
+    font-family: 'PretendardVariable', sans-serif;
+    font-size: 18px;
+}
+
+
+.filter-container {
+    position: relative;
+    height: 100px;
+    border-bottom: 1px solid #efefef;
+}
+
+.filter-container a {
+    font-size: 12px;
+    position: absolute;
+    top: 5px;
+    color: #bcbcbc;
+    right: 20px;
+    text-decoration: underline;
+    border-bottom: 1px soid #161313;
+}
+
+
+.items-filter input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    border: 1px solid #dedddd;
+    border-radius: 50%;
+    appearance: none;
+    background-color: white;
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    outline: none;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+
+.items-filter input[type="checkbox"]:checked {
+    background-color: #ff6600;
+}
+
+.items-filter input[type="checkbox"]:checked::after {
+    display: block;
+    content: "";
+    width: 8px;
+    height: 8px;
+    background-color: white;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+
+.items-filter label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #333;
+}
+
+
+.items-filter input[type="checkbox"]:hover {
+    background-color: #dedede;
+}
+
+
+/*위치 필터*/
+
+.filter-region-container {
+    margin-top: 25px;
+    border-bottom: 1px solid #efefef;
+}
+
+.filter-region-container .filter-region {
+    font-family: 'PretendardVariable', sans-serif;
+    margin-top: 15px;
+    font-size: 16px;
+}
+
+.filter-region-container ul {
+    margin-left: -40px;
+}
+
+.filter-region-container .filter-region {
+    margin-bottom: -0px;
+}
+
+.filter-region-container .filter-city {
+    margin-top: -10px;
+    margin-left: 20px;
+}
+
+.filter-region-container .filter-village li{
+    margin-left: 40px;
+}
+
+.filter-result-container {
+    margin-top: -20px;
+    margin-bottom: 30px;
+}
+
+.filter-region-container .filter-result {
+    margin-top: -20px;
+}
+
+.filter-region-container .filter-village {
+    margin-bottom: 13px;
+    margin-left: 40px;
+}
+
+.filter-region-container .filter-village {
+    margin-top: -20px;
+    margin-left: -10px;
+    margin-left: 40px;
+}
+
+
+
+.filter-region-container .filter-region-more {
+    font-size: 13px;
+    display: inline-block;
+    margin-top: 15px;
+}
+
+.filter-region-container .filter-region-more a {
+    color: #ed5c08;
+}
+
+
+.filter-region-container ul input {
+    display: inline-block;
+    margin-left: 27px;
+    margin-top: 10px;
+}
+
+
+.filter-region-container span {
+    display: inline-block;
+    margin-top: -34px;
+    margin-left: 50px;
+    font-size: 15px;
+}
+
+
+/* 카테고리 필터 */
+.filter-category-container {
+    margin-top: 25px;
+}
+
+.filter-category-container li {
+    margin-top: 5px;
+    margin-left: 40px;
+}
+
+.filter-category-container span {
+    display: inline-block;
+    margin-top: -31px;
+    margin-left: 30px;
+}
+
+.filter-category-container ul {
+    margin-left: -40px;
+}
+
+/* 정렬 필터 */
+
+.filter-sort {
+    border-top: 1px solid #eee;
+}
+
+.filter-sort li {
+    margin-left: 40px;
+}
+
+.filter-sort h3 {
+    margin-top: 20px;
+}
+
+.filter-sort input {
+    display: inline-block;
+}
+
+.filter-sort span {
+    display: inline-block;
+    margin-top: -31px;
+    margin-left: 30px;
+}
+
+.filter-sort input {
+    display: inline-block;
+}
+
+.filter-sort ul {
+    margin-left: -40px;
+}
+
+/* 가격 필터 */
+
+.filter-price {
+    margin-top: 25px;
+    border-top: 1px solid #eee;
+    padding: 10px 0;
+}
+
+.filter-price h3 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.price-buttons {
+    margin-top: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.price-buttons button {
+    margin-bottom: 10px;
+    display: block;
+    padding: 8px 15px;
+    background-color: #ffffff;
+    border: 1px solid #eee;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.price-buttons button:hover {
+    background-color: #ddd;
+}
+
+.price-buttons button:active {
+    background-color: #bbb;
+}
+
+.price-range {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.price-range input[type="number"] {
+    margin-top: 10px;
+    width: 89px;
+    height: 26px;
+    padding: 1px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.price-range span {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.apply-button {
+    padding: 8px 15px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.apply-button:hover {
+    background-color: #444;
+}
+
+
+
+#activeFilters {
+    position: absolute;
+    display: inline-block;
+    width: inherit;
+    height: 20px;
+    top: 110px;
+    left: 225px;
+    margin-top: -10px;
+    margin-left: 20px;
+    margin-bottom: 100px;
+}
+
+#activeFilters button {
+    display: inline-block;
+    border-radius: 50px;
+    margin-right: 20px;
+    line-height: 10px;
+    height: 30px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    line-height: 1 px;
+    text-align: center;
+    padding: 10px;
+    cursor: pointer;
+
+}
+
+
+/* 적용된 필터 */
+.filter-list {
+    position: absolute;
+    display: inline-block;
+    width: inherit;
+    height: 20px;
+    margin-top: -10px;
+    margin-left: 20px;
+    margin-bottom: 100px;
+}
+
+.filter-list .filter-button {
+    display: inline-block;
+    border-radius: 50px;
+    margin-right: 20px;
+    height: 30px;
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    line-height: 1 px;
+    text-align: center;
+    padding: 8px;
+}
