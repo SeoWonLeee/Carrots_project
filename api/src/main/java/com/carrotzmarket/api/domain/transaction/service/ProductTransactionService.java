@@ -37,12 +37,6 @@ public class ProductTransactionService {
     private final ProductTransactionConverter converter;
     private final ProductService productService;
 
-    /**
-     * TODO : createTransaction() 구매자 ID, 판매자 ID, 상품 ID 유효성 검증
-     * 구매자 ID, 판매자 ID, 상품 ID 각각 조회
-     * 상품이 존재 하지 않거나, 유효하지 않는 사용자 ID가 요청된 경우 예외 발생
-     */
-
     @Transactional(readOnly = false)
     public ProductTransactionEntity createTransaction(PurchaseRequest request) {
         ProductTransactionEntity entity = converter.toEntity(request);
@@ -51,18 +45,11 @@ public class ProductTransactionService {
 
     @Transactional(readOnly = false)
     public ProductTransactionEntity updateTransaction(TransactionStatusUpdateRequest request) {
-
-        // 거래 상태 변경을 요청하는 사용자가 판매자인지 확인
         ProductEntity product = productService.findProductById(request.getProductId());
-
         validateSellerAuthorization(product, request.getAuthorId());
-
-        // 상품의 ID와 판매자의 ID로 거래내역을 조회
-        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndAuthorId(product.getId(), request.getAuthorId()).orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
-
-        // 거래 상태 변경
+        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndAuthorId(
+                product.getId(), request.getAuthorId()).orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
         changeTransactionStatus(transaction, product, request.getStatus());
-
         return transaction;
     }
 
@@ -88,19 +75,13 @@ public class ProductTransactionService {
 
     public List<TransactionHistoryDto> findAllPurchaseHistory(Long userId) {
         List<ProductTransactionEntity> transactions = repository.findAllPurchaseHistoryByUserId(userId);
-        return transactions.stream()
-                .map(this::convertToTransactionHistoryDto)
-                .toList();
+        return transactions.stream().map(this::convertToTransactionHistoryDto).toList();
     }
-
 
     public List<TransactionHistoryDto> findAllSalesHistory(Long userId) {
         List<ProductTransactionEntity> transactions = repository.findAllSalesHistoryByUserId(userId);
-        return transactions.stream()
-                .map(this::convertToTransactionHistoryDto)
-                .toList();
+        return transactions.stream().map(this::convertToTransactionHistoryDto).toList();
     }
-
 
     private void changeTransactionStatus(ProductTransactionEntity entity, ProductEntity product, TransactionStatus status) {
         if (entity.getStatus().equals(status)) {
@@ -134,4 +115,38 @@ public class ProductTransactionService {
         }
     }
 
+    @Transactional(readOnly = false)
+    public ProductTransactionEntity updateTransactionDetails(TransactionStatusUpdateRequest request) {
+        ProductEntity product = productService.findProductById(request.getProductId());
+        validateSellerAuthorization(product, request.getAuthorId());
+
+        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndSellerId(
+                        request.getProductId(), request.getAuthorId())
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
+
+        transaction.setTransactionDate(request.getTransactionDate());
+        transaction.setTradingHours(request.getTradingHours());
+        transaction.setStatus(request.getStatus());
+
+        updateProductStatus(transaction, product);
+
+        return repository.save(transaction);
+    }
+
+
+    private void updateProductStatus(ProductTransactionEntity transaction, ProductEntity product) {
+        if (transaction.getStatus() == TransactionStatus.RESERVED) {
+            product.setStatus(ProductStatus.RESERVED);
+        } else if (transaction.getStatus() == TransactionStatus.COMPLETED) {
+            product.setStatus(ProductStatus.SOLD_OUT);
+        } else if (transaction.getStatus() == TransactionStatus.CANCELED) {
+            product.setStatus(ProductStatus.ON_SALE);
+        }
+    }
+
+    public TransactionHistoryDto findTransactionDetailByIdForUpdate(Long id) {
+        ProductTransactionEntity transaction = repository.findTransactionDetailById(id)
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
+        return convertToTransactionHistoryDto(transaction);
+    }
 }

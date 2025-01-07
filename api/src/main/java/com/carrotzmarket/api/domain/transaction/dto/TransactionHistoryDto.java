@@ -1,16 +1,15 @@
 package com.carrotzmarket.api.domain.transaction.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-
-@Getter
-@Setter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class TransactionHistoryDto {
@@ -18,9 +17,10 @@ public class TransactionHistoryDto {
     private Long buyerId;
     private Long sellerId;
     private String title;
-    private int price;
     private LocalDate transactionDate;
     private LocalDateTime tradingHours;
-    private String tradingPlace;
     private String status;
+    private LocalDateTime statusChangeDate;
+    private int price;
+    private String tradingPlace;
 }
