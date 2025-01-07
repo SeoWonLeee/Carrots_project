@@ -33,6 +33,13 @@
 | --- | --- | --- | --- |
 |  |  | https://github.com/sha2170 | https://github.com/SeoWonLeee |
 
+
+| **이정훈** |                 |
+| **최민우** |                 |
+| **성현아** | https://github.com/sha2170 |
+| **이서원** | https://github.com/SeoWonLeee |
+
+
 팀 깃허브 :  [Group6-Carrots](https://github.com/Group6-Carrots)
 
 프로젝트 관리 지라 : https://qweqwerty12321-1733977276703.atlassian.net/jira/software/projects/KAN/boards/1
