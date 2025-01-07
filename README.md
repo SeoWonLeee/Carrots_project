@@ -29,15 +29,12 @@
 
 ## 2. 팀 소개
 
-|                **이정훈** |                **최민우** |               **성현아** |                  **이서원** |
-| --- | --- | --- | --- |
-|  |  | https://github.com/sha2170 | https://github.com/SeoWonLeee |
-
-
-| **이정훈** |                 |
-| **최민우** |                 |
-| **성현아** | https://github.com/sha2170 |
-| **이서원** | https://github.com/SeoWonLeee |
+| 팀원 |GitHub |
+|:---:|:---|
+|이정훈|[주소](https://github.com/DawnIsProblem)|
+|최민우|[주소](https://github.com/choiminu)|
+|성현아|[주소](https://github.com/sha2170)|
+|이서원|[주소](https://github.com/SeoWonLeee)|
 
 
 팀 깃허브 :  [Group6-Carrots](https://github.com/Group6-Carrots)
