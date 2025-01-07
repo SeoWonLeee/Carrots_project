@@ -31,7 +31,7 @@
 
 |                **이정훈** |                **최민우** |               **성현아** |                  **이서원** |
 | --- | --- | --- | --- |
-|  |  | https://github.com/sha2170 |  |
+|  |  | https://github.com/sha2170 | https://github.com/SeoWonLeee |
 
 팀 깃허브 :  [Group6-Carrots](https://github.com/Group6-Carrots)
 
