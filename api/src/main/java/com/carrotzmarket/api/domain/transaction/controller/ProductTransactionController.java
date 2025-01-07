@@ -6,8 +6,9 @@ import com.carrotzmarket.api.domain.transaction.dto.TransactionStatusUpdateReque
 import com.carrotzmarket.api.domain.transaction.service.ProductTransactionService;
 import com.carrotzmarket.db.transaction.ProductTransactionEntity;
 import java.util.List;
+
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Literal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,21 +27,18 @@ public class ProductTransactionController {
         return service.createTransaction(request);
     }
 
-    /**
-     * TODO : 쿼리 파라미터 UserId를 받기 보다 세션을 이용하여 UserId를 받아올 수 있도록 수정
-     */
+
     @GetMapping("/transaction/history/purchase/{userId}")
     public List<TransactionHistoryDto> getPurchaseHistory(@PathVariable Long userId) {
         return service.findAllPurchaseHistory(userId);
     }
 
-    /**
-     * TODO : 쿼리 파라미터 UserId를 받기 보다 세션을 이용하여 UserId를 받아올 수 있도록 수정
-     */
+
     @GetMapping("/transaction/history/sales/{userId}")
     public List<TransactionHistoryDto> getSalesHistory(@PathVariable Long userId) {
         return service.findAllSalesHistory(userId);
     }
+
 
     @GetMapping("/transaction/detail/{id}")
     public TransactionHistoryDto getTransactionDetail(@PathVariable Long id) {
@@ -53,5 +51,16 @@ public class ProductTransactionController {
         return service.updateTransaction(request);
     }
 
-}
 
+    @GetMapping("/transaction/detail/update/{id}")
+    public TransactionHistoryDto getTransactionDetailForUpdate(@PathVariable Long id) {
+        return service.findTransactionDetailByIdForUpdate(id);
+    }
+
+
+    @PutMapping("/transaction/update")
+    public ProductTransactionEntity updateTransactionDetails(@Valid @RequestBody TransactionStatusUpdateRequest request) {
+        return service.updateTransactionDetails(request);
+    }
+
+}
