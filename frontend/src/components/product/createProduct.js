@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom"; // useNavigate 추가
 import KakaoMap from "../KakaoMap"; // 카카오맵 컴포넌트를 임포트
 import "../../style/createProduct.css";
 
 const CreateProduct = () => {
+        const navigate = useNavigate(); // useNavigate 훅 사용
+    
     const [product, setProduct] = useState({
         title: "",
         categoryId: "",
@@ -97,7 +100,7 @@ const CreateProduct = () => {
             console.error("오류 발생:", error);
         }
 
-        navigator('/');
+        navigate('/');
     };
 
     return (

@@ -14,6 +14,7 @@ import com.carrotzmarket.api.common.exception.ApiException;
 import com.carrotzmarket.api.domain.product.service.ProductService;
 import com.carrotzmarket.api.domain.transaction.converter.ProductTransactionConverter;
 import com.carrotzmarket.api.domain.transaction.dto.PurchaseRequest;
+import com.carrotzmarket.api.domain.transaction.dto.ScheduleRequest;
 import com.carrotzmarket.api.domain.transaction.dto.TransactionHistoryDto;
 import com.carrotzmarket.api.domain.transaction.dto.TransactionStatusUpdateRequest;
 import com.carrotzmarket.api.domain.transaction.repository.ProductTransactionRepository;
@@ -21,6 +22,11 @@ import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
 import com.carrotzmarket.db.transaction.ProductTransactionEntity;
 import com.carrotzmarket.db.transaction.TransactionStatus;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -109,6 +115,26 @@ public class ProductTransactionService {
         }
     }
 
+    @Transactional
+    public void saveSchedule(ScheduleRequest request) {
+        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndSellerId(
+                        request.getProductId(), request.getSellerId())
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
+
+        transaction.setTransactionDate(request.getDate());
+        transaction.setTradingHours(LocalDateTime.of(request.getDate(),
+                LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm"))));
+        transaction.setTradingPlace(request.getPlace());
+
+        transaction.setStatus(TransactionStatus.RESERVED);
+
+        ProductEntity product = transaction.getProduct();
+        product.setStatus(ProductStatus.RESERVED);
+
+        repository.save(transaction);
+    }
+
+
     private void validateSellerAuthorization(ProductEntity product, Long authorId) {
         if (!product.getUserId().equals(authorId)) {
             throw new ApiException(ONLY_SELLER_CAN_CHANGE_STATUS);
@@ -124,15 +150,18 @@ public class ProductTransactionService {
                         request.getProductId(), request.getAuthorId())
                 .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
 
-        transaction.setTransactionDate(request.getTransactionDate());
-        transaction.setTradingHours(request.getTradingHours());
+        LocalDate date = request.getTransactionDate();
+        LocalTime time = LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalDateTime tradingHours = LocalDateTime.of(date, time);
+
+        transaction.setTransactionDate(date);
+        transaction.setTradingHours(tradingHours);
         transaction.setStatus(request.getStatus());
 
         updateProductStatus(transaction, product);
 
         return repository.save(transaction);
     }
-
 
     private void updateProductStatus(ProductTransactionEntity transaction, ProductEntity product) {
         if (transaction.getStatus() == TransactionStatus.RESERVED) {
