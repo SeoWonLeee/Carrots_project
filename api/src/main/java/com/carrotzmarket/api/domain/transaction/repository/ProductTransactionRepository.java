@@ -14,9 +14,7 @@ public class ProductTransactionRepository {
 
     private final EntityManager em;
 
-    /**
-     * TODO : 사용자가 동일한 상품에 대해 구매요청 시 예외 던지기
-     */
+
     public ProductTransactionEntity save(ProductTransactionEntity productTransaction) {
         em.persist(productTransaction);
         return productTransaction;
@@ -39,5 +37,24 @@ public class ProductTransactionRepository {
         return em.createQuery("SELECT P FROM ProductTransactionEntity P WHERE P.sellerId = :id AND P.status = 'COMPLETED'", ProductTransactionEntity.class)
                 .setParameter("id", id)
                 .getResultList();
+    }
+
+    public Optional<ProductTransactionEntity> findTransactionDetailById(Long id) {
+        return em.createQuery(
+                        "SELECT t FROM ProductTransactionEntity t " +
+                                "JOIN FETCH t.product p " +
+                                "WHERE t.id = :id", ProductTransactionEntity.class)
+                .setParameter("id", id)
+                .getResultStream().findFirst();
+    }
+
+    public Optional<ProductTransactionEntity> findTransactionByProductIdAndSellerId(Long productId, Long sellerId) {
+        return em.createQuery(
+                        "SELECT t FROM ProductTransactionEntity t WHERE t.product.id = :productId AND t.sellerId = :sellerId",
+                        ProductTransactionEntity.class)
+                .setParameter("productId", productId)
+                .setParameter("sellerId", sellerId)
+                .getResultStream()
+                .findFirst();
     }
 }

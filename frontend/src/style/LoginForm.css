@@ -1,0 +1,157 @@
+/* 로그인 */
+.login-container {
+    margin: 50px auto;
+    width: 100%;
+    max-width: 500px;
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    font-family: 'PretendardVariable', sans-serif;
+    background-color: #fff;
+    height: 400px;
+}
+
+/* 제목 스타일 */
+.login-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+/* 폼 그룹 스타일 */
+.login-form .form-group {
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.login-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
+}
+
+.login-form input {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.login-form input:focus {
+    border-color: #ff6f00;
+    box-shadow: 0 0 5px rgba(255, 111, 0, 0.5);
+}
+
+/* 로그인 버튼 */
+.main-btn-login {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #ff6f00;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.login-logo img {
+    display: block;
+    width: 100px;
+    height: 100px;
+    text-align: center;
+    margin-left: 195px;
+    margin-top: -30px;
+}
+
+.main-btn-login:hover {
+    background-color: #e55e00;
+}
+
+/* 하단 링크 */
+.form-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.form-links a {
+    color: #666;
+    text-decoration: none;
+}
+
+.form-links a:hover {
+    text-decoration: underline;
+    color: #ff6f00;
+}
+
+.social-login {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.social-login-title {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+}
+
+.social-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* 둥근 소셜 로그인 버튼 */
+.social-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: #fff;
+    margin-left: 5px;
+    ;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.social-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 각 소셜 버튼 색상 */
+.google-btn {
+    background-color: #db4437;
+    /* 구글 색상 */
+}
+
+.facebook-btn {
+    background-color: #3b5998;
+    /* 페이스북 색상 */
+}
+
+.kakao-btn {
+    background-color: #fee500;
+    /* 카카오톡 색상 */
+    color: #381e1f;
+    /* 카카오 로고 글자 색상 */
+}
+
+/* 아이콘 정렬 */
+.social-btn i {
+    margin: 0;
+}

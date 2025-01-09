@@ -1,0 +1,508 @@
+#mypage {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.mypage {
+    margin: 0px 250px;
+    width: 800px;
+    height: auto;
+    border: 1px solid #d0d0d0;
+}
+
+.mypage-header{
+    box-sizing: border-box;
+    padding: 14px;
+    display: block;
+    text-align: left;
+    height: 50px;
+    background-color: #eeeff1;
+    border-bottom: 1px solid #d0d0d0;
+}
+
+.mypage-header span{
+    font-family: 'PretendardVariable', sans-serif;
+    height: 50px;
+    font-size: 18px;
+    color: #e84502;
+    background-color: #eeeff1;
+}
+
+
+.mypage .user-info-wrap {
+    width: 100%;
+    height: 200px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-info-wrap .user-info-profile-img{
+    float: left;
+    width: 20%;
+    height: inherit;
+    background-color: #fff;
+}
+
+.user-info-wrap .user-info-profile-img .user-profile-img{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-top: 35px;
+    
+}
+
+.user-info-wrap .user-info-profile-img .user-profile-img img{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    margin-left: 20px;
+    border: 1px solid rgb(213, 213, 213);
+}
+
+/* ----- */
+
+
+.user-info-wrap .user-info-profile{
+    float: left;
+    margin-top: -8px;
+    margin-left: 20px;
+    width: 70%;
+    height: inherit;
+}
+
+.user-info-wrap .user-info-profile .user-info-section1{
+    position: relative;
+    margin-bottom: 15px;
+    height: 33.33%;
+}
+
+.user-info-wrap .user-info-profile .user-info-section1 .user-info-loginId{
+    font-family: 'PretendardVariable', sans-serif;
+    position: absolute;
+    bottom: 0;
+    font-size: 20px;
+    color: #ffa112;
+}
+
+.user-info-wrap .user-info-profile .user-info-section2{
+    display: block;
+    height: 33.33%;
+}
+
+.user-info-wrap .user-info-profile .user-info-section2 .user-info-sec2{
+    display: block;
+    height: 33.33%;
+    font-size: 12px;
+    margin-top: -10px;
+    margin-left: 2px;
+}
+
+.user-info-wrap .user-info-profile .user-info-section3{
+    height: 33.33%;
+}
+
+.user-info-wrap .user-info-profile .user-info-section3 button{
+    font-family: 'PretendardVariable', sans-serif;
+    width: 100%;
+    height: 30px;
+    border: none;
+    border-radius: 5px;
+    background-color: #ff6f0f;
+    color: #fff;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.user-info-wrap .user-info-profile .user-info-section3 button:hover{
+    background-color: #da5c08;
+}
+
+
+
+.user-info-wrap .user-info-etc{
+    float: left;
+    width: 33.333%;
+    height: inherit;
+    background-color: #4e1515;
+}
+
+
+
+
+.user-transaction-wrap {
+    width: 100%;
+    height: 200px;
+    border-bottom: 1px solid #eee;
+}
+
+.user-buy-history {
+    margin-top: -10px;
+    float: left;
+    width: 33.333%;
+    height: inherit;
+}
+
+.user-sell-history a {
+    text-decoration: none; /* 링크 기본 밑줄 제거 */
+    color: inherit; /* 부모 요소의 텍스트 색상 계승 */
+    display: flex; /* 아이콘과 텍스트 정렬 */
+    flex-direction: column; /* 세로로 아이템 배치 */
+    align-items: center; /* 가로 가운데 정렬 */
+    transition: transform 0.3s ease, color 0.3s ease; /* 부드러운 효과 */
+}
+
+.user-sell-history a:hover {
+    transform: scale(1.1); /* 전체 요소 확대 효과 */
+    color: #007bff; /* 텍스트 색상 변경 */
+}
+
+.user-buy-history a {
+    text-decoration: none; /* 링크 기본 밑줄 제거 */
+    color: inherit; /* 부모 요소의 텍스트 색상 계승 */
+    display: flex; /* 아이콘과 텍스트 정렬 */
+    flex-direction: column; /* 세로로 아이템 배치 */
+    align-items: center; /* 가로 가운데 정렬 */
+    transition: transform 0.3s ease, color 0.3s ease; /* 부드러운 효과 */
+}
+
+.user-buy-history a:hover {
+    transform: scale(1.1); /* 전체 요소 확대 효과 */
+    color: #007bff; /* 텍스트 색상 변경 */
+}
+
+.user-like-history a {
+    text-decoration: none; /* 링크 기본 밑줄 제거 */
+    color: inherit; /* 부모 요소의 텍스트 색상 계승 */
+    display: flex; /* 아이콘과 텍스트 정렬 */
+    flex-direction: column; /* 세로로 아이템 배치 */
+    align-items: center; /* 가로 가운데 정렬 */
+    transition: transform 0.3s ease, color 0.3s ease; /* 부드러운 효과 */
+}
+
+.user-like-history a:hover {
+    transform: scale(1.1); /* 전체 요소 확대 효과 */
+    color: #007bff; /* 텍스트 색상 변경 */
+}
+
+
+
+.user-sell-history .user-sell-icon {
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    margin-top: 50px;
+    border-radius: 50%;
+    background-color: #f0f4f7;
+
+    display: flex; /* Flexbox 활성화 */
+    justify-content: center; /* 가로 가운데 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
+}
+
+.user-icon-text {
+    display: inline-block;
+    margin-top: 10px; /* 텍스트 위쪽 간격 */
+    font-size: 14px; /* 텍스트 크기 */
+    color: #333; /* 텍스트 색상 */
+    text-align: center; /* 텍스트 가운데 정렬 */
+}
+
+
+.user-sell-history .sell-icon{
+    width: 50px;
+    height: 50px;
+    font-size: 200px;
+}
+
+.user-buy-history .user-buy-icon {
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    margin-top: 50px;
+    border-radius: 50%;
+    background-color: #f0f4f7;
+
+    display: flex; /* Flexbox 활성화 */
+    justify-content: center; /* 가로 가운데 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
+}
+
+.user-buy-history .buy-icon{
+    width: 50px;
+    height: 50px;
+    font-size: 200px;
+}
+
+.user-like-history .user-like-icon {
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    margin-top: 50px;
+    border-radius: 50%;
+    background-color: #f0f4f7;
+
+    display: flex; /* Flexbox 활성화 */
+    justify-content: center; /* 가로 가운데 정렬 */
+    align-items: center; /* 세로 가운데 정렬 */
+}
+
+.user-like-history .like-icon{
+    width: 50px;
+    height: 50px;
+    font-size: 200px;
+}
+
+
+.user-like-history {
+    margin-top: -10px;
+    float: left;
+    width: 33.333%;
+    height: inherit;
+}
+
+.user-sell-history {
+    margin-top: -10px;
+    float: left;
+    width: 33.333%;
+    height: inherit;
+}
+
+
+
+
+.user-list-wrap {
+    padding: 0; /* 패딩 제거 */
+    margin: 0; /* 마진 제거 */
+}
+
+.user-list-wrap ul {
+    list-style: none; /* 불필요한 리스트 스타일 제거 */
+    padding: 0; /* 패딩 제거 */
+    margin: 0; /* 마진 제거 */
+    display: flex; /* 리스트를 가로로 배치하려면 flex 사용 */
+    flex-direction: column; /* 세로로 정렬 */
+    box-sizing: border-box;
+}
+
+.user-list-wrap li {
+    position: relative;
+    box-sizing: border-box;
+    padding: 15px;
+    height: 50px;
+    border-bottom: 1px solid beige;
+    transition: 0.3s;
+}
+
+.user-list-wrap li:hover{
+    background-color: #f2f2f2;
+}
+
+.user-list-wrap li span{
+    display: inline-block;
+    font-family: 'PretendardVariable', sans-serif;
+    font-size: 15px;
+}
+
+
+
+
+
+
+/* 매너 온도 */
+/* 매너 컨테이너 */
+.manner-container {
+    margin-top: 10px;
+    position: relative;
+    text-align: right;
+    font-family: 'PretendardVariable', sans-serif;
+    color: #666;
+}
+
+/* 매너 온도와 이모지 */
+.manner-header {
+    display: flex;
+    justify-content: right;
+    align-items: right;
+    gap: 5px;
+    font-size: 20px;
+    color: #ffa112;
+    font-weight: bold;
+}
+
+.basic-temperature {
+    font-family: 'PretendardVariable', sans-serif;
+    position: absolute;
+    font-size: 11px;
+    left: 165px;
+    top: -17px;
+    color: #bcbcbc;
+}
+
+.basic-temperature-icon {
+    content: '';
+    position: absolute;
+    left: 197px;
+    width: 7px;
+    height: 7px;
+    width: 0;
+    top: -2px;
+    height: 0;
+    border-left: 5px solid transparent; /* 왼쪽 투명 */
+    border-right: 5px solid transparent; /* 오른쪽 투명 */
+    border-bottom: 7px solid #bcbcbc; /* 아래쪽 삼각형 색상 */
+    transform: rotate(180deg);
+}
+
+.manner-header .manner-temperature{
+    margin-top: -13px;
+    font-size: 15px;
+}
+
+.manner-emoji {
+    margin-top: -15px;
+    font-size: 15px;
+}
+
+/* 매너 온도 바 */
+.manner-bar {
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    left: 0;
+    top: 10px;
+    background-color: #e0e0e0; /* 회색 배경 */
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.manner-bar-filled {
+    width: 20px;
+    height: 100%;
+    background-color: #ffa112;
+    border-radius: 4px;
+    font-size: 12px;
+    transition: width 0.3s ease-in-out; /* 부드러운 애니메이션 */
+}
+
+/* 매너 라벨 */
+.manner-label {
+    font-size: 14px;
+    color: #9e9e9e; /* 회색 */
+    margin-top: 5px;
+}
+
+/* 매너 온도 끝 */
+
+
+
+
+
+
+/* 리뷰 */
+.user-list-wrap {
+    width: 100%;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+}
+
+
+
+.list-item {
+    display: flex;
+    text-align: left;
+}
+
+
+.list-item:hover {
+    background: #f1f1f1;
+}
+
+.list-arrow {
+    width: 10px;
+    height: 10px;
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
+    transform: rotate(45deg);
+    transition: transform 0.3s ease;
+}
+
+.list-arrow.open {
+    transform: rotate(-135deg);
+}
+
+.slide-content {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 10px;
+    transition: max-height 0.3s ease, padding 0.3s ease;
+}
+
+.slide-content .slide-item {
+    transition: 0.3s;
+}
+.slide-content .slide-item:hover{
+    display: block;
+    background-color: rgb(233, 233, 233);
+}
+
+.slide-content.open {
+    max-height: 500px; /* 슬라이드의 최대 높이 설정 */
+    padding: 10px 10px;
+}
+
+
+
+.sell-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    margin-top: 10px;
+}
+
+.sell-item-img img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+}
+
+.sell-item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.sell-item-title {
+    font-size: 16px;
+    margin: 0;
+    font-weight: bold;
+}
+
+.sell-item-price {
+    font-size: 14px;
+    color: #888;
+    margin: 5px 0;
+}
+
+.sell-item-views {
+    font-size: 12px;
+    color: #aaa;
+}

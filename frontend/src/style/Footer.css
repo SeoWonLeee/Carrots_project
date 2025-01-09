@@ -1,0 +1,124 @@
+#footer{
+    clear: both;
+}
+.footer .footer-nav {
+    clear: both;
+    height: 424px;
+    margin-top: 20px;
+    border-bottom: 1px solid #ddd;
+}
+
+.footer .footer-logo {
+    width: 50%;
+    height: 100px;
+    background-color: #fff;
+    float: left;
+}
+
+.footer .footer-logo img {
+    width: 52px;
+    height: 100px;
+}
+
+.footer .footer-logo img {
+    width: 52px;
+    height: 100px;
+}
+
+.footer .footer-category {
+    float: left;
+    width: 50%;
+}
+
+.footer .footer-category ul {
+    float: left;
+    width: 20%;
+    height: 200px;
+}
+
+.footer .footer-category ul:last-child {
+    float: left;
+    width: 10%;
+    height: 200px;
+}
+
+.footer .footer-category ul p {
+    font-family: 'PretendardVariable', sans-serif;
+    font-size: 16px;
+}
+
+.footer .footer-category li {
+    font-family: 'PretendardVariable', sans-serif;
+    font-size: 14px;
+    margin-top: 8px;
+}
+
+.footer .footer-category li a:hover {
+    color: #979797;
+}
+
+.footer-info {
+    text-align: center;
+    font-family: 'PretendardVariable', sans-serif;
+    color: #979797;
+}
+
+.footer-info .footer-links li {
+    display: inline-block;
+    margin-right: 10px;
+    color: #979797;
+}
+
+.footer-info .footer-links a {
+    font-family: 'PretendardVariable', sans-serif;
+    display: inline-block;
+    margin-right: 10px;
+    color: #979797;
+}
+
+.footer .footer-banner {
+    height: 356px;
+    background-color: #fff2ec;
+    overflow: hidden;
+}
+
+.footer .footer-banner-content {
+    position: absolute;
+    top: -300px;
+}
+
+.footer .footer-banner-content h1{
+    font-family: 'PretendardVariable', sans-serif;
+    font-weight: bold;
+    margin-top: 100px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #e84500;
+}
+
+.footer .footer-banner-content h2{
+    font-family: 'PretendardVariable', sans-serif;
+    font-weight: bold;
+    margin-top: 100px;
+    font-weight: bold;
+    margin-top: 20px;
+    color: #000000;
+}
+
+.footer .footer-banner-content a{
+    text-align: center;
+    display: block;
+    width: 200px;
+    height: 40px;
+    background-color: #191919;
+    border-radius: 10px;
+    line-height: 40px;
+    color: #fff;
+    font-size: 20px
+}
+
+.footer .footer-banner img {
+    width: 500px;
+    object-fit: cover;
+    margin-left: 58%;
+}

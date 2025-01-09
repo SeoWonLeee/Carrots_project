@@ -1,6 +1,6 @@
 package com.carrotzmarket.api.domain.product.dto;
 
-import com.carrotzmarket.db.category.CategoryEntity;
+import com.carrotzmarket.api.domain.Address.Address;
 import com.carrotzmarket.db.product.ProductStatus;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +10,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -31,9 +34,16 @@ public class ProductCreateRequestDto {
 
     private Long userId;
 
-    private Long regionId;
+//    private Long regionId;
 
     private Long categoryId;
 
     private ProductStatus status;
+
+    private List<MultipartFile> images;
+
+    private String province;
+    private String city;
+    private String town;
+    private String village;
 }

@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 
 import com.carrotzmarket.api.domain.transaction.converter.ProductTransactionConverter;
 import com.carrotzmarket.api.domain.transaction.dto.PurchaseRequest;
+import com.carrotzmarket.api.domain.transaction.dto.TransactionHistoryDto;
 import com.carrotzmarket.api.domain.transaction.dto.TransactionStatusUpdateRequest;
 import com.carrotzmarket.api.domain.transaction.repository.ProductTransactionRepository;
 import com.carrotzmarket.db.product.ProductEntity;
@@ -84,7 +85,7 @@ class ProductTransactionServiceTest {
         when(repository.findAllPurchaseHistoryByUserId(buyerId)).thenReturn(List.of(entity1, entity2));
 
         // when
-        List<ProductTransactionEntity> purchaseHistory = service.findAllPurchaseHistory(buyerId);
+        List<TransactionHistoryDto> purchaseHistory = service.findAllPurchaseHistory(buyerId);
 
         // then
         assertThat(purchaseHistory)
@@ -114,7 +115,7 @@ class ProductTransactionServiceTest {
         when(repository.findAllPurchaseHistoryByUserId(buyerId)).thenReturn(List.of(entity2));
 
         // when
-        List<ProductTransactionEntity> purchaseHistory = service.findAllPurchaseHistory(buyerId);
+        List<TransactionHistoryDto> purchaseHistory = service.findAllPurchaseHistory(buyerId);
 
         // then
         assertThat(purchaseHistory)
@@ -146,7 +147,7 @@ class ProductTransactionServiceTest {
         when(repository.findAllSalesHistoryByUserId(sellerId)).thenReturn(List.of(entity1, entity2));
 
         // when
-        List<ProductTransactionEntity> purchaseHistory = service.findAllSalesHistory(sellerId);
+        List<TransactionHistoryDto> purchaseHistory = service.findAllSalesHistory(sellerId);
 
         // then
         assertThat(purchaseHistory)
@@ -176,7 +177,7 @@ class ProductTransactionServiceTest {
         when(repository.findAllSalesHistoryByUserId(sellerId)).thenReturn(List.of(entity2));
 
         // when
-        List<ProductTransactionEntity> purchaseHistory = service.findAllSalesHistory(sellerId);
+        List<TransactionHistoryDto> purchaseHistory = service.findAllSalesHistory(sellerId);
 
         // then
         assertThat(purchaseHistory)
@@ -208,7 +209,7 @@ class ProductTransactionServiceTest {
         product.setId(1L);
         product.setUserId(1L);
         product.setRegionId(1L);
-        product.setName("책상");
+        product.setTitle("책상");
         product.setDescription("설명");
         product.setPrice(1000);
         product.setCreatedAt(LocalDateTime.now());

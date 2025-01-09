@@ -14,12 +14,19 @@ import com.carrotzmarket.api.common.exception.ApiException;
 import com.carrotzmarket.api.domain.product.service.ProductService;
 import com.carrotzmarket.api.domain.transaction.converter.ProductTransactionConverter;
 import com.carrotzmarket.api.domain.transaction.dto.PurchaseRequest;
+import com.carrotzmarket.api.domain.transaction.dto.ScheduleRequest;
+import com.carrotzmarket.api.domain.transaction.dto.TransactionHistoryDto;
 import com.carrotzmarket.api.domain.transaction.dto.TransactionStatusUpdateRequest;
 import com.carrotzmarket.api.domain.transaction.repository.ProductTransactionRepository;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
 import com.carrotzmarket.db.transaction.ProductTransactionEntity;
 import com.carrotzmarket.db.transaction.TransactionStatus;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,12 +43,6 @@ public class ProductTransactionService {
     private final ProductTransactionConverter converter;
     private final ProductService productService;
 
-    /**
-     * TODO : createTransaction() 구매자 ID, 판매자 ID, 상품 ID 유효성 검증
-     * 구매자 ID, 판매자 ID, 상품 ID 각각 조회
-     * 상품이 존재 하지 않거나, 유효하지 않는 사용자 ID가 요청된 경우 예외 발생
-     */
-
     @Transactional(readOnly = false)
     public ProductTransactionEntity createTransaction(PurchaseRequest request) {
         ProductTransactionEntity entity = converter.toEntity(request);
@@ -50,27 +51,42 @@ public class ProductTransactionService {
 
     @Transactional(readOnly = false)
     public ProductTransactionEntity updateTransaction(TransactionStatusUpdateRequest request) {
-
-        // 거래 상태 변경을 요청하는 사용자가 판매자인지 확인
         ProductEntity product = productService.findProductById(request.getProductId());
-
         validateSellerAuthorization(product, request.getAuthorId());
-
-        // 상품의 ID와 판매자의 ID로 거래내역을 조회
-        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndAuthorId(product.getId(), request.getAuthorId()).orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
-
-        // 거래 상태 변경
+        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndAuthorId(
+                product.getId(), request.getAuthorId()).orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
         changeTransactionStatus(transaction, product, request.getStatus());
-
         return transaction;
     }
 
-    public List<ProductTransactionEntity> findAllPurchaseHistory(Long userId) {
-        return repository.findAllPurchaseHistoryByUserId(userId);
+    @Transactional(readOnly = true)
+    public TransactionHistoryDto findTransactionDetailById(Long id) {
+        ProductTransactionEntity transaction = repository.findTransactionDetailById(id)
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND, "Transaction not found with id: " + id));
+        return convertToTransactionHistoryDto(transaction);
     }
 
-    public List<ProductTransactionEntity> findAllSalesHistory(Long userId) {
-        return repository.findAllSalesHistoryByUserId(userId);
+    private TransactionHistoryDto convertToTransactionHistoryDto(ProductTransactionEntity transaction) {
+        TransactionHistoryDto dto = new TransactionHistoryDto();
+        dto.setId(transaction.getId());
+        dto.setTitle(transaction.getProduct().getTitle());
+        dto.setPrice(transaction.getProduct().getPrice());
+        dto.setTransactionDate(transaction.getTransactionDate());
+        dto.setTradingPlace(transaction.getTradingPlace());
+        dto.setBuyerId(transaction.getBuyerId());
+        dto.setSellerId(transaction.getSellerId());
+        dto.setStatus(transaction.getStatus().name());
+        return dto;
+    }
+
+    public List<TransactionHistoryDto> findAllPurchaseHistory(Long userId) {
+        List<ProductTransactionEntity> transactions = repository.findAllPurchaseHistoryByUserId(userId);
+        return transactions.stream().map(this::convertToTransactionHistoryDto).toList();
+    }
+
+    public List<TransactionHistoryDto> findAllSalesHistory(Long userId) {
+        List<ProductTransactionEntity> transactions = repository.findAllSalesHistoryByUserId(userId);
+        return transactions.stream().map(this::convertToTransactionHistoryDto).toList();
     }
 
     private void changeTransactionStatus(ProductTransactionEntity entity, ProductEntity product, TransactionStatus status) {
@@ -99,10 +115,67 @@ public class ProductTransactionService {
         }
     }
 
+    @Transactional
+    public void saveSchedule(ScheduleRequest request) {
+        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndSellerId(
+                        request.getProductId(), request.getSellerId())
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
+
+        transaction.setTransactionDate(request.getDate());
+        transaction.setTradingHours(LocalDateTime.of(request.getDate(),
+                LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm"))));
+        transaction.setTradingPlace(request.getPlace());
+
+        transaction.setStatus(TransactionStatus.RESERVED);
+
+        ProductEntity product = transaction.getProduct();
+        product.setStatus(ProductStatus.RESERVED);
+
+        repository.save(transaction);
+    }
+
+
     private void validateSellerAuthorization(ProductEntity product, Long authorId) {
         if (!product.getUserId().equals(authorId)) {
             throw new ApiException(ONLY_SELLER_CAN_CHANGE_STATUS);
         }
     }
 
+    @Transactional(readOnly = false)
+    public ProductTransactionEntity updateTransactionDetails(TransactionStatusUpdateRequest request) {
+        ProductEntity product = productService.findProductById(request.getProductId());
+        validateSellerAuthorization(product, request.getAuthorId());
+
+        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndSellerId(
+                        request.getProductId(), request.getAuthorId())
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
+
+        LocalDate date = request.getTransactionDate();
+        LocalTime time = LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        LocalDateTime tradingHours = LocalDateTime.of(date, time);
+
+        transaction.setTransactionDate(date);
+        transaction.setTradingHours(tradingHours);
+        transaction.setStatus(request.getStatus());
+
+        updateProductStatus(transaction, product);
+
+        return repository.save(transaction);
+    }
+
+    private void updateProductStatus(ProductTransactionEntity transaction, ProductEntity product) {
+        if (transaction.getStatus() == TransactionStatus.RESERVED) {
+            product.setStatus(ProductStatus.RESERVED);
+        } else if (transaction.getStatus() == TransactionStatus.COMPLETED) {
+            product.setStatus(ProductStatus.SOLD_OUT);
+        } else if (transaction.getStatus() == TransactionStatus.CANCELED) {
+            product.setStatus(ProductStatus.ON_SALE);
+        }
+    }
+
+    public TransactionHistoryDto findTransactionDetailByIdForUpdate(Long id) {
+        ProductTransactionEntity transaction = repository.findTransactionDetailById(id)
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
+        return convertToTransactionHistoryDto(transaction);
+    }
 }

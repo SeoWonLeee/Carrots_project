@@ -1,38 +1,27 @@
 package com.carrotzmarket.db.product;
 
+import com.carrotzmarket.db.address.Address;
 import com.carrotzmarket.db.category.CategoryEntity;
+import com.carrotzmarket.db.chat.ChatRoomEntity;
+import com.carrotzmarket.db.productImage.ProductImageEntity;
 import com.carrotzmarket.db.transaction.ProductTransactionEntity;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Lob;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.EnumType;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 import java.time.LocalDateTime;
-import java.util.List;
-import lombok.Setter;
 
 @Entity
 @Table(name = "product")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
+@Data
 public class ProductEntity {
 
     @Id
@@ -42,7 +31,7 @@ public class ProductEntity {
     @Column(name = "user_id", unique = false, nullable = true)
     private Long userId;
 
-    @Column(name = "region_id", nullable = false)
+    @Column(name = "region_id", nullable = true)
     private Long regionId;
 
     @Column(length = 100, nullable = false)
@@ -56,8 +45,8 @@ public class ProductEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private CategoryEntity category;
-
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -66,10 +55,10 @@ public class ProductEntity {
     private LocalDateTime updatedAt;
 
     @Column(name = "view_count", nullable = false)
-    private int viewCount;
+    private int viewCount = 0;
 
     @Column(name = "favorite_count", nullable = false)
-    private int favoriteCount;
+    private int favoriteCount = 0;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -78,13 +67,20 @@ public class ProductEntity {
     @OneToOne(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private ProductTransactionEntity transaction;
 
-    // 수정된 부분: 카테고리 다대다 관계
-    @ManyToMany
-    @JoinTable(
-            name = "product_category",  // 중간 테이블 이름
-            joinColumns = @JoinColumn(name = "product_id"),  // 제품 ID
-            inverseJoinColumns = @JoinColumn(name = "category_id")  // 카테고리 ID
-    )
-    private List<CategoryEntity> categories;  // 여러 카테고리를 저장
+    @OneToOne
+    @JoinColumn(name = "address_id")
+    private Address address;
 
+
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

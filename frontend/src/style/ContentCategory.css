@@ -1,0 +1,50 @@
+.contens {}
+
+#contents .content1 {
+    height: 330px;
+}
+
+#contents .content1 h2 {
+    font-family: 'PretendardVariable', sans-serif;
+    margin-top: 30px;
+    margin-left: 20px;
+    font-size: 24px;
+}
+
+#contents .content1 .pop-category {
+    margin-top: 50px;
+    text-align: center;
+}
+
+#contents .content1 .pop-category a {
+    position: relative;
+    display: inline-block;
+    width: 150px;
+    height: 150px;
+    background-color: #eeeff1;
+    border-radius: 50%;
+    margin-right: 20px;
+    transition: 0.3s;
+}
+
+#contents .content1 .pop-category a:hover {
+    transform: translateY(-5px);
+}
+
+#contents .content1 .pop-category a img {
+    position: absolute;
+    top: 0%;
+    left: 30%;
+    margin-top: 50px;
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+#contents .content1 .pop-category a p {
+    margin-top: 165px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 13px;
+
+}

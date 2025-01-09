@@ -1,25 +1,45 @@
 package com.carrotzmarket.api.domain.product.service;
 
+import com.carrotzmarket.api.domain.Address.service.AddressService;
+import com.carrotzmarket.api.domain.category.dto.CategoryDto;
+import com.carrotzmarket.api.domain.category.repository.CategoryRepository;
+import com.carrotzmarket.api.domain.favoriteProduct.repository.FavoriteProductRepository;
+import com.carrotzmarket.api.domain.notification.service.NotificationService;
+import com.carrotzmarket.api.domain.image.domain.Image;
 import com.carrotzmarket.api.domain.product.dto.ProductCreateRequestDto;
 import com.carrotzmarket.api.domain.product.dto.ProductResponseDto;
 import com.carrotzmarket.api.domain.product.dto.ProductUpdateRequestDto;
 import com.carrotzmarket.api.domain.product.repository.ProductRepository;
-import com.carrotzmarket.api.domain.category.repository.CategoryRepository;
+import com.carrotzmarket.api.domain.productImage.service.FileUploadService;
+import com.carrotzmarket.api.domain.productImage.service.ProductImageService;
+import com.carrotzmarket.api.domain.region.service.RegionService;
+import com.carrotzmarket.api.domain.transaction.repository.ProductTransactionRepository;
+import com.carrotzmarket.api.domain.user.dto.temp.ProductSummaryDto;
+import com.carrotzmarket.api.domain.user.dto.temp.SellerProfileDto;
+import com.carrotzmarket.api.domain.user.repository.UserRepository;
+import com.carrotzmarket.api.domain.user.service.UserMannerService;
+import com.carrotzmarket.api.domain.viewedProduct.service.ViewedProductService;
+import com.carrotzmarket.db.address.Address;
+import com.carrotzmarket.db.address.City;
+import com.carrotzmarket.db.address.Province;
+import com.carrotzmarket.db.address.Town;
+import com.carrotzmarket.db.address.Village;
 import com.carrotzmarket.db.category.CategoryEntity;
+import com.carrotzmarket.db.favoriteProduct.FavoriteProductEntity;
 import com.carrotzmarket.db.product.ProductEntity;
 import com.carrotzmarket.db.product.ProductStatus;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
+import com.carrotzmarket.db.productImage.ProductImageEntity;
+import com.carrotzmarket.db.transaction.ProductTransactionEntity;
+import com.carrotzmarket.db.transaction.TransactionStatus;
+import com.carrotzmarket.db.user.UserEntity;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,141 +48,402 @@ public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final RegionService regionService;
+    private final ProductImageService productImageService;
+    private final FileUploadService fileUploadService;
+    private final FavoriteProductRepository favoriteProductRepository;
+    private final UserRepository userRepository;
+    private final ViewedProductService viewedProductService;
+    private final ProductTransactionRepository productTransactionRepository;
+    private final UserMannerService userService;
+    private final NotificationService notificationService;
+    private final AddressService addressService;
 
-    // ProductEntity를 조회하는 메서드
+
+
+    private final com.carrotzmarket.api.domain.image.service.ProductImageService productImageService2;
+
     public ProductEntity findProductById(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
     }
 
     public ProductEntity createProduct(ProductCreateRequestDto request) {
-        // 카테고리 조회
         CategoryEntity category = categoryRepository.findById(request.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("Category not found with ID: " + request.getCategoryId()));
 
-        // DTO -> Entity 변환
+
+        Province province = null;
+        if (request.getProvince() != null && !request.getProvince().isEmpty()) {
+            Optional<Province> province1 = addressService.findProvince(request.getProvince());
+            if (province1.isPresent()) province = province1.get();
+        }
+
+        City city = null;
+        if (request.getCity() != null && !request.getCity().isEmpty()) {
+            Optional<City> village1 = addressService.findCity(request.getCity());
+            if (village1.isPresent()) city = village1.get();
+        }
+
+        Town town = null;
+        if (request.getTown() != null && !request.getTown().isEmpty()) {
+            Optional<Town> village1 = addressService.findTown(request.getTown());
+            if (village1.isPresent()) town = village1.get();
+        }
+
+        Village village = null;
+        if (request.getVillage() != null && !request.getVillage().isEmpty()) {
+            Optional<Village> village1 = addressService.findVillage(request.getVillage());
+            if (village1.isPresent()) village = village1.get();
+        }
+
+        Address address = addressService.create(province, city, town, village);
         ProductEntity product = ProductEntity.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .price(request.getPrice())
                 .userId(request.getUserId())
-                .regionId(request.getRegionId())
-                .category(category) // 카테고리 설정
-                .status(request.getStatus())
+                .category(category)
+                .address(address)
+                .status(ProductStatus.ON_SALE)
                 .build();
 
-        // 상품 저장
-        return productRepository.save(product);
+        ProductEntity savedProduct = productRepository.save(product);
+
+        List<Image> images = productImageService2.uploadImages(request.getImages());
+
+        if (request.getImages() != null && !request.getImages().isEmpty()) {
+            List<ProductImageEntity> productImages = new ArrayList<>();
+            for (Image image : images) {
+                ProductImageEntity productImage = new ProductImageEntity();
+                productImage.setProductId(savedProduct.getId());
+                productImage.setImageUrl(image.getStoreFileName());
+                productImages.add(productImage);
+            }
+            productImageService.saveAll(productImages);
+        }
+
+
+//        if (request.getImages() != null && !request.getImages().isEmpty()) {
+//            List<ProductImageEntity> productImages = new ArrayList<>();
+//            for (MultipartFile image : request.getImages()) {
+//                try {
+//                    String imageUrl = fileUploadService.uploadFile(image);
+//                    ProductImageEntity productImage = new ProductImageEntity();
+//                    productImage.setProductId(savedProduct.getId());
+//                    productImage.setImageUrl(imageUrl);
+//                    productImages.add(productImage);
+//                } catch (IOException e) {
+//                    throw new RuntimeException("Failed to upload image: " + image.getOriginalFilename(), e);
+//                }
+//            }
+//            productImageService.saveAll(productImages);
+//        }
+
+        return savedProduct;
     }
 
-    // 제품 조회
-    public ProductResponseDto getProductById(Long id) {
+
+    public void deleteProduct(Long id) {
+        favoriteProductRepository.deleteByProductId(id);
+
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        productRepository.delete(product);
+    }
+
+
+    private void saveProductImages(Long productId, List<MultipartFile> images) {
+        List<ProductImageEntity> productImages = new ArrayList<>();
+        for (MultipartFile image : images) {
+            try {
+                String imageUrl = fileUploadService.uploadFile(image);
+                ProductImageEntity productImage = new ProductImageEntity();
+                productImage.setProductId(productId);
+                productImage.setImageUrl(imageUrl);
+                productImages.add(productImage);
+            } catch (IOException e) {
+                throw new RuntimeException("Failed to upload image: " + image.getOriginalFilename(), e);
+            }
+        }
+        productImageService.saveAll(productImages);
+    }
+
+
+    public ProductResponseDto getProductById(Long id) {
+        incrementViewCount(id);
+
+        ProductEntity product = findProductById(id);
+
+        List<ProductImageEntity> productImages = productImageService.getProductImageByProductId(id);
+        List<String> imageUrls = productImages.stream()
+                .map(ProductImageEntity::getImageUrl)
+                .collect(Collectors.toList());
 
         return new ProductResponseDto(
                 product.getId(),
                 product.getTitle(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getCategory() != null ? product.getCategory().getId() : null,
                 product.getUserId(),
                 product.getRegionId(),
-                product.getStatus()
+                product.getCategory() != null ? new CategoryDto(
+                        product.getCategory().getId(),
+                        product.getCategory().getName(),
+                        product.getCategory().getDescription(),
+                        product.getCategory().isEnabled()
+                ) : null,
+                product.getStatus(),
+                imageUrls,
+                product.getFavoriteCount(),
+                product.getViewCount()
         );
     }
 
-    // 제품 수정
-    @Transactional
+
+    public String addFavoriteProduct(Long userId, Long productId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("등록되지 않은 상품입니다."));
+
+        Optional<FavoriteProductEntity> existingFavorite = favoriteProductRepository.findByUserIdAndProductId(userId, productId);
+        if (existingFavorite.isPresent()) {
+            return "이미 관심 상품으로 등록되어 있습니다.";
+        }
+
+        FavoriteProductEntity favorite = FavoriteProductEntity.builder()
+                .userId(userId)
+                .product(product)
+                .build();
+        favoriteProductRepository.save(favorite);
+
+        product.setFavoriteCount(product.getFavoriteCount() + 1);
+        productRepository.save(product);
+
+        return "관심 상품으로 등록되었습니다.";
+    }
+
+
+    public String removeFavoriteProduct(Long userId, Long productId) {
+        Optional<FavoriteProductEntity> existingFavorite =
+                favoriteProductRepository.findByUserIdAndProductId(userId, productId);
+
+        if (existingFavorite.isEmpty()) {
+            return "해당 상품은 관심 상품으로 등록되어 있지 않습니다.";
+        }
+
+        favoriteProductRepository.delete(existingFavorite.get());
+
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+        product.setFavoriteCount(Math.max(product.getFavoriteCount() - 1, 0)); // 최소값 0 유지
+        productRepository.save(product);
+
+        return "관심 상품이 정상적으로 해제되었습니다.";
+    }
+
+
+    public List<Object> getFavoriteProductsByUserId(Long userId) {
+        List<FavoriteProductEntity> favoriteProducts = favoriteProductRepository.findByUserId(userId);
+
+        if (favoriteProducts.isEmpty()) {
+            return List.of("해당 유저의 관심 상품이 등록되어 있지 않습니다.");
+        }
+
+        return favoriteProducts.stream()
+                .map(favorite -> {
+                    ProductEntity product = favorite.getProduct();
+
+                    if (product == null) {
+                        return "해당 상품은 등록되어 있지 않은 상품입니다.";
+                    }
+
+                    List<String> imageUrls = productImageService.getProductImageByProductId(product.getId())
+                            .stream()
+                            .map(ProductImageEntity::getImageUrl)
+                            .collect(Collectors.toList());
+
+                    return new ProductResponseDto(product, imageUrls);
+                })
+                .collect(Collectors.toList());
+    }
+
+
+
     public ProductResponseDto updateProduct(Long id, ProductUpdateRequestDto request) {
         ProductEntity product = productRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
 
-        // 사용자가 수정할 항목 업데이트
         product.setTitle(request.getTitle());
         product.setDescription(request.getDescription());
         product.setPrice(request.getPrice());
 
-        productRepository.save(product); // JPA 변경감지로 저장
+        productRepository.save(product);
+
+        CategoryDto categoryDto = product.getCategory() != null ?
+                new CategoryDto(product.getCategory().getId(), product.getCategory().getName(), product.getCategory().getDescription(), product.getCategory().isEnabled()) :
+                null;
+        productRepository.save(product);
+
+        List<String> imageUrls = productImageService.getProductImageByProductId(id).stream()
+                .map(ProductImageEntity::getImageUrl)
+                .collect(Collectors.toList());
+
         return new ProductResponseDto(
                 product.getId(),
                 product.getTitle(),
                 product.getDescription(),
                 product.getPrice(),
-                product.getCategory() != null ? product.getCategory().getId() : null,
                 product.getUserId(),
                 product.getRegionId(),
-                product.getStatus()
+                categoryDto,
+                product.getStatus(),
+                imageUrls,
+                product.getFavoriteCount(),
+                product.getViewCount()
         );
     }
 
-    // 제품 삭제
-    @Transactional
-    public void deleteProduct(Long id) {
-        ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
-        productRepository.delete(product);
-    }
 
-    // 거래 상태 변경
-    @Transactional
     public ProductResponseDto updateProductStatus(Long id, ProductStatus status) {
         ProductEntity product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        if (status == ProductStatus.SOLD) {
+            List<FavoriteProductEntity> favoriteUsers = favoriteProductRepository.findByProductId(id);
+            for (FavoriteProductEntity favoriteProduct : favoriteUsers) {
+                Long userId = favoriteProduct.getUserId();
+                notificationService.sendProductSoldNotification(userId, id, product.getTitle());
+            }
+        }
 
         product.setStatus(status);
         productRepository.save(product);
 
-        return new ProductResponseDto(
-                product.getId(),
-                product.getTitle(),
-                product.getDescription(),
-                product.getPrice(),
-                product.getCategory() != null ? product.getCategory().getId() : null,
-                product.getUserId(),
-                product.getRegionId(),
-                product.getStatus()
+        List<String> imageUrls = productImageService.getProductImageByProductId(id)
+                .stream()
+                .map(ProductImageEntity::getImageUrl)
+                .collect(Collectors.toList());
+
+        return new ProductResponseDto(product, imageUrls);
+    }
+
+    public Map<String, Object> getSellerMannerTemperature(Long productId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 상품을 찾을 수 없습니다."));
+
+        Long sellerId = product.getUserId();
+        Double mannerTemperature = userRepository.findMannerTemperatureById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 판매자를 찾을 수 없습니다."));
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("sellerId", sellerId);
+        response.put("mannerTemperature", mannerTemperature);
+
+        return response;
+    }
+
+    @Transactional
+    public void incrementViewCount(Long productId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        product.setViewCount(product.getViewCount() + 1);
+        productRepository.save(product);
+    }
+
+    @Transactional
+    public Map<String, Object> getSellerInfoAndOtherProducts(Long productId) {
+        ProductEntity product = productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("상품을 찾을 수 없습니다."));
+
+        Long sellerId = product.getUserId();
+        UserEntity seller = userRepository.findById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("판매자를 찾을 수 없습니다."));
+
+        Double mannerTemperature = userRepository.findMannerTemperatureById(sellerId)
+                .orElseThrow(() -> new IllegalArgumentException("판매자의 매너 온도를 찾을 수 없습니다."));
+
+
+        SellerProfileDto sellerProfile = new SellerProfileDto(
+                seller.getId(),
+                seller.getLoginId(),
+                seller.getProfileImageUrl(),
+                mannerTemperature
         );
+
+        List<ProductEntity> otherProducts = productRepository.findByUserId(sellerId)
+                .stream()
+                .filter(p -> !p.getId().equals(productId))
+                .collect(Collectors.toList());
+
+        List<ProductSummaryDto> otherProductDtos = otherProducts.stream()
+                .map(p -> new ProductSummaryDto(p.getId(), p.getTitle(), p.getPrice()))
+                .collect(Collectors.toList());
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("sellerProfile", sellerProfile);
+        result.put("otherProducts", otherProductDtos);
+
+        return result;
     }
 
-    // Dto -> Entity 변환 메서드
-    private ProductEntity dtoToEntity(ProductCreateRequestDto productCreateRequestDto) {
-        return ProductEntity.builder()
-                .title(productCreateRequestDto.getTitle())
-                .description(productCreateRequestDto.getDescription())
-                .price(productCreateRequestDto.getPrice())
-                .regionId(1L) // 기본값: 임시 지역 ID
-                .status(ProductStatus.ON_SALE)
-                .viewCount(0) // 기본값
-                .favoriteCount(0) // 기본값
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
+    @Transactional
+    public void updateTransactionStatus(Long transactionId, String status) {
+        ProductTransactionEntity transaction = productTransactionRepository.findTransactionDetailById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("Transaction not found"));
+
+        if ("COMPLETED".equals(status) && !"COMPLETED".equals(transaction.getStatus())) {
+            transaction.setStatus(TransactionStatus.COMPLETED);
+            productTransactionRepository.save(transaction);
+
+            UserEntity seller = userRepository.findById(transaction.getSellerId())
+                    .orElseThrow(() -> new IllegalArgumentException("Seller not found"));
+            seller.setMannerTemperature(seller.getMannerTemperature() + 1);
+            userRepository.save(seller);
+        }
     }
 
-    // Entity -> Dto 변환 메서드
-    private ProductCreateRequestDto entityToDto(ProductEntity productEntity) {
-        return ProductCreateRequestDto.builder()
-                .title(productEntity.getTitle())
-                .description(productEntity.getDescription())
-                .price(productEntity.getPrice())
-                .userId(productEntity.getUserId())
-                .regionId(productEntity.getRegionId())
-                .status(productEntity.getStatus())
-                .build();
+    @Transactional
+    public void completeTransaction(Long transactionId) {
+        // 거래 상태 업데이트
+        ProductTransactionEntity transaction = productTransactionRepository.findTransactionDetailById(transactionId)
+                .orElseThrow(() -> new IllegalArgumentException("거래를 찾을 수 없습니다."));
+        transaction.setStatus(TransactionStatus.COMPLETED);
+        productTransactionRepository.save(transaction);
+
+        // 판매자의 매너 온도 업데이트
+        userService.updateMannerTemperature(transaction.getSellerId());
+    }
+
+    public ProductResponseDto getProductById(Long id, Long userId) {
+        viewedProductService.recordViewedProduct(userId, id);
+
+        ProductEntity product = findProductById(id);
+
+        List<ProductImageEntity> productImages = productImageService.getProductImageByProductId(id);
+        List<String> imageUrls = productImages.stream()
+                .map(ProductImageEntity::getImageUrl)
+                .collect(Collectors.toList());
+
+        boolean isViewed = viewedProductService.getViewedProductIds(userId).contains(id);
+
+        return new ProductResponseDto(
+                product,
+                imageUrls,
+                isViewed
+        );
     }
 
     public List<ProductEntity> getProductByUserId(Long userId) {
         return productRepository.findByUserId(userId);
     }
 
-    public List<ProductEntity> searchProductByName(String name) {
-        return productRepository.findByTitleContaining(name);
-    }
 
     public List<ProductEntity> searchProductByTitle(String title) {
         return productRepository.findByTitleContaining(title);
     }
+
 
     public List<ProductEntity> getProductByStatus(ProductStatus status) {
         return productRepository.findByStatus(status);
@@ -182,8 +463,5 @@ public class ProductService {
     public List<ProductEntity> getProductByUserIdAndStatus(Long userId, ProductStatus status) {
         return productRepository.findByUserIdAndStatus(userId, status);
     }
-
-    public List<ProductEntity> getProductByCategory(String categoryName) {
-        return productRepository.findByCategories_Name(categoryName);
-    }
 }
+
