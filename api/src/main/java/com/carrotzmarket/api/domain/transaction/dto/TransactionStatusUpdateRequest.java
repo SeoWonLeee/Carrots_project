@@ -17,4 +17,6 @@ public class TransactionStatusUpdateRequest {
     private LocalDate transactionDate;
     private LocalDateTime tradingHours;
     private TransactionStatus status;
+    private String time;
+    private String tradingPlace;
 }

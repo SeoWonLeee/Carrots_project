@@ -7,6 +7,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../user/AuthContext';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faImage, faList, faSmile, faCalendarDays, faCarrot, faComment } from '@fortawesome/free-solid-svg-icons';
+import Schedule from './Schedule';
 
 function Talk() {
     const [user, setUser] = useState('');
@@ -22,6 +23,51 @@ function Talk() {
     const [currentChatRoom, setCurrentChatRoom] = useState(null);
     const [loading, setLoading] = useState(true);
     const chatContainerRef = useRef(null); // 스크롤 컨테이너 참조
+    
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const handleOpenModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleSaveModal = (scheduleData) => {
+        console.log("저장할 스케줄 데이터:", scheduleData); // 추가
+        const saveSchedule = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/schedule`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        date: scheduleData.date,   // 날짜는 그대로
+                        time: scheduleData.time.replace('오전 ', '').replace('오후 ', ''), // 시간에서 오전/오후 제거
+                        place: scheduleData.place, // 장소
+                    }),
+                });
+        
+                if (response.ok) {
+                    console.log('약속 저장 성공');
+                    setIsModalOpen(false);
+                } else {
+                    const errorData = await response.text();
+                    console.error('약속 저장 실패:', errorData);
+                }
+            } catch (error) {
+                console.error('서버 통신 에러:', error);
+            }
+        };
+        
+        
+    
+        saveSchedule();
+    };
+    
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
@@ -357,7 +403,7 @@ function Talk() {
 
                                         <div className="chat-wrapper">
                                             <div className='produt-transaction'>
-                                                <button className='transcation-date'>
+                                                <button className='transcation-date' onClick={handleOpenModal}>
                                                     <FontAwesomeIcon icon={faCalendarDays} className="tool-icon" />
                                                     <span> 약속잡기</span>
                                                 </button>
@@ -370,6 +416,12 @@ function Talk() {
                                                     <span> 물품추가</span>
                                                 </button>
                                             </div>
+
+                                            <Schedule
+                                                isOpen={isModalOpen}
+                                                onClose={handleCloseModal}
+                                                onSave={handleSaveModal}
+                                            />
 
                                             <div className="chat-container" ref={chatContainerRef}>
                                                 {messages.map((msg, idx) => (
