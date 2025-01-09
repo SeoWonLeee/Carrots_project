@@ -135,12 +135,6 @@ public class ProductTransactionService {
     }
 
 
-
-
-
-
-
-
     private void validateSellerAuthorization(ProductEntity product, Long authorId) {
         if (!product.getUserId().equals(authorId)) {
             throw new ApiException(ONLY_SELLER_CAN_CHANGE_STATUS);
@@ -156,7 +150,6 @@ public class ProductTransactionService {
                         request.getProductId(), request.getAuthorId())
                 .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
 
-        // 거래 정보 업데이트
         LocalDate date = request.getTransactionDate();
         LocalTime time = LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm"));
         LocalDateTime tradingHours = LocalDateTime.of(date, time);
@@ -167,12 +160,8 @@ public class ProductTransactionService {
 
         updateProductStatus(transaction, product);
 
-        return repository.save(transaction); // 수정된 트랜잭션 반환
+        return repository.save(transaction);
     }
-
-
-
-
 
     private void updateProductStatus(ProductTransactionEntity transaction, ProductEntity product) {
         if (transaction.getStatus() == TransactionStatus.RESERVED) {

@@ -60,3 +60,4 @@ public class ProductTransactionEntity {
         this.statusChangeDate = LocalDateTime.now();
     }
 }
+

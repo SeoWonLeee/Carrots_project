@@ -48,7 +48,6 @@ public class ProductTransactionController {
     }
 
 
-
     @GetMapping("/transaction/history/purchase/{userId}")
     public List<TransactionHistoryDto> getPurchaseHistory(@PathVariable Long userId) {
         return service.findAllPurchaseHistory(userId);

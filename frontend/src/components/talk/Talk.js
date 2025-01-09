@@ -22,7 +22,7 @@ function Talk() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [currentChatRoom, setCurrentChatRoom] = useState(null);
     const [loading, setLoading] = useState(true);
-    const chatContainerRef = useRef(null); // 스크롤 컨테이너 참조
+    const chatContainerRef = useRef(null);
     
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -36,7 +36,7 @@ function Talk() {
     };
 
     const handleSaveModal = (scheduleData) => {
-        console.log("저장할 스케줄 데이터:", scheduleData); // 추가
+        console.log("저장할 스케줄 데이터:", scheduleData);
         const saveSchedule = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/schedule`, {
@@ -48,7 +48,7 @@ function Talk() {
                         productId: currentChatRoom.productId,
                         sellerId: userData.id,
                         date: scheduleData.date,   // 날짜는 그대로
-                        time: scheduleData.time.replace('오전 ', '').replace('오후 ', ''), // 시간에서 오전/오후 제거
+                        time: scheduleData.time.replace('오전 ', '').replace('오후 ', ''),
                         place: scheduleData.place, // 장소
                     }),
                 });
@@ -512,5 +512,6 @@ function Talk() {
         </Layout>
     );
 }
+
 
 export default Talk;
