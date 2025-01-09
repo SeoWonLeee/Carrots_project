@@ -36,8 +36,16 @@ public class ProductTransactionController {
     public ResponseEntity<?> createSchedule(@RequestBody ScheduleRequest request) {
         log.info("Received ScheduleRequest: {}", request);
 
+        service.saveSchedule(request);
+
+        String chatMessage = String.format("%s %s %s에서의 약속이 저장되었습니다.",
+                request.getDate(),
+                request.getTime(),
+                request.getPlace()
+        );
+
         // 추가 로직
-        return ResponseEntity.ok("약속이 저장되었습니다.");
+        return ResponseEntity.ok(chatMessage);
     }
 
 

@@ -52,8 +52,8 @@ function Talk() {
                 });
         
                 if (response.ok) {
-                    console.log('약속 저장 성공');
-                    alert('약속이 성공적으로 저장되었습니다!');
+                    const message = await response.text();
+                    alert(message);
                     setIsModalOpen(false);
                 } else {
                     const errorData = await response.text();
