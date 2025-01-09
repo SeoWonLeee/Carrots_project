@@ -36,12 +36,16 @@ public class ProductTransactionEntity {
 
     private Boolean hasReview;
 
+    @Column(name = "transaction_date")
     private LocalDate transactionDate;
+
+    @Column(name = "transaction_hours")
     private LocalDateTime tradingHours;
 
     @Column(name = "status_change_date", nullable = true)
     private LocalDateTime statusChangeDate;
 
+    @Column(name = "trading_place")
     private String tradingPlace;
 
     @PrePersist

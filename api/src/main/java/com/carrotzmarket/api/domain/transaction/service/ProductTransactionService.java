@@ -117,24 +117,21 @@ public class ProductTransactionService {
 
     @Transactional
     public void saveSchedule(ScheduleRequest request) {
-        // LocalDate는 그대로 사용
-        LocalDate date = request.getDate();
-
-        // String -> LocalTime 변환
-        LocalTime time = LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm"));
+        ProductTransactionEntity transaction = new ProductTransactionEntity();
 
         // LocalDate와 LocalTime을 결합하여 LocalDateTime 생성
-        LocalDateTime tradingHours = LocalDateTime.of(date, time);
+        LocalDate transactionDate = request.getDate(); // LocalDate
+        LocalTime transactionTime = LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm")); // LocalTime
+        LocalDateTime tradingHours = LocalDateTime.of(transactionDate, transactionTime); // LocalDateTime 생성
 
-        // 거래 정보 설정
-        ProductTransactionEntity transaction = new ProductTransactionEntity();
-        transaction.setTransactionDate(date); // LocalDate 저장
-        transaction.setTradingHours(tradingHours); // LocalDateTime 저장
-        transaction.setTradingPlace(request.getPlace()); // 장소 저장
+        transaction.setTransactionDate(transactionDate);
+        transaction.setTradingHours(tradingHours); // LocalDateTime으로 설정
+        transaction.setTradingPlace(request.getPlace());
 
-        // DB에 저장
-        repository.save(transaction);
+        repository.save(transaction); // 데이터베이스에 저장
     }
+
+
 
 
 

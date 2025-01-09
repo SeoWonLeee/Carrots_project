@@ -53,10 +53,12 @@ function Talk() {
         
                 if (response.ok) {
                     console.log('약속 저장 성공');
+                    alert('약속이 성공적으로 저장되었습니다!');
                     setIsModalOpen(false);
                 } else {
                     const errorData = await response.text();
                     console.error('약속 저장 실패:', errorData);
+                    alert('약속 저장에 실패했습니다. 다시 시도해주세요.');
                 }
             } catch (error) {
                 console.error('서버 통신 에러:', error);
