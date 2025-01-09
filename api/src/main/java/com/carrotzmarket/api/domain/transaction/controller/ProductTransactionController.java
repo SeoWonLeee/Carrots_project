@@ -44,7 +44,6 @@ public class ProductTransactionController {
                 request.getPlace()
         );
 
-        // 추가 로직
         return ResponseEntity.ok(chatMessage);
     }
 

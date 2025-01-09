@@ -117,19 +117,23 @@ public class ProductTransactionService {
 
     @Transactional
     public void saveSchedule(ScheduleRequest request) {
-        ProductTransactionEntity transaction = new ProductTransactionEntity();
+        ProductTransactionEntity transaction = repository.findTransactionByProductIdAndSellerId(
+                        request.getProductId(), request.getSellerId())
+                .orElseThrow(() -> new ApiException(TRANSACTION_NOT_FOUND));
 
-        // LocalDate와 LocalTime을 결합하여 LocalDateTime 생성
-        LocalDate transactionDate = request.getDate(); // LocalDate
-        LocalTime transactionTime = LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm")); // LocalTime
-        LocalDateTime tradingHours = LocalDateTime.of(transactionDate, transactionTime); // LocalDateTime 생성
-
-        transaction.setTransactionDate(transactionDate);
-        transaction.setTradingHours(tradingHours); // LocalDateTime으로 설정
+        transaction.setTransactionDate(request.getDate());
+        transaction.setTradingHours(LocalDateTime.of(request.getDate(),
+                LocalTime.parse(request.getTime(), DateTimeFormatter.ofPattern("HH:mm"))));
         transaction.setTradingPlace(request.getPlace());
 
-        repository.save(transaction); // 데이터베이스에 저장
+        transaction.setStatus(TransactionStatus.RESERVED);
+
+        ProductEntity product = transaction.getProduct();
+        product.setStatus(ProductStatus.RESERVED);
+
+        repository.save(transaction);
     }
+
 
 
 

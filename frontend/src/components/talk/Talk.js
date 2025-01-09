@@ -45,6 +45,8 @@ function Talk() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
+                        productId: currentChatRoom.productId,
+                        sellerId: userData.id,
                         date: scheduleData.date,   // 날짜는 그대로
                         time: scheduleData.time.replace('오전 ', '').replace('오후 ', ''), // 시간에서 오전/오후 제거
                         place: scheduleData.place, // 장소

@@ -50,11 +50,12 @@ public class ProductTransactionRepository {
 
     public Optional<ProductTransactionEntity> findTransactionByProductIdAndSellerId(Long productId, Long sellerId) {
         return em.createQuery(
-                        "SELECT t FROM ProductTransactionEntity t " +
-                                "WHERE t.product.id = :productId AND t.sellerId = :sellerId", ProductTransactionEntity.class)
+                        "SELECT t FROM ProductTransactionEntity t WHERE t.product.id = :productId AND t.sellerId = :sellerId",
+                        ProductTransactionEntity.class)
                 .setParameter("productId", productId)
                 .setParameter("sellerId", sellerId)
                 .getResultStream()
                 .findFirst();
     }
+
 }
