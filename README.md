@@ -43,9 +43,9 @@
 
 ---
 
-## 3. 발표 영상 및 프로젝트 실행 영상
+## 3. 발표 자료 및 프로젝트 실행 영상
 
-[]()
+https://qweqwerty12321-1733977276703.atlassian.net/jira/software/projects/KAN/list?selectedIssue=KAN-204
 
 ---
 
