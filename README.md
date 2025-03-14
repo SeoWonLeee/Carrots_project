@@ -43,9 +43,28 @@
 
 ---
 
-## 3. 발표 자료 및 프로젝트 실행 영상
+## 3. 프로젝트 실행 영상
 
-https://qweqwerty12321-1733977276703.atlassian.net/jira/software/projects/KAN/list?selectedIssue=KAN-204
+**🌱 회원가입**
+
+![회원가입](https://github.com/user-attachments/assets/4eb7a90d-0e73-4f9f-94a1-9c2cf05a89e9)
+
+**🌱 로그인**
+
+![로그인](https://github.com/user-attachments/assets/ec8ba9c8-2103-48de-a661-e6eb973de4ea)
+
+**🌱 상품 등록**
+
+![상품 등록](https://github.com/user-attachments/assets/f2fd4883-9eaf-410b-a3ec-b0be0409d655)
+
+**🌱 상품 조회**
+
+![상품 조회](https://github.com/user-attachments/assets/b7b3b31e-c074-4ee0-92a7-0a2215b7ee1b)
+
+
+**🌱 필터링**
+
+![필터링](https://github.com/user-attachments/assets/b923fa24-ff8e-4e5a-a834-2c66308e5169)
 
 ---
 
